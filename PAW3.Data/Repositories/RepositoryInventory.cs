@@ -1,4 +1,5 @@
-﻿using PAW3.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PAW3.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,11 @@ public interface IRepositoryInventory
     Task<bool> ExistsAsync(Inventory entity);
 }
 
-public class ReposityryInventory : RepositoryBase<Inventory>, IRepositoryInventory
+public class RepositoryInventory : RepositoryBase<Inventory>, IRepositoryInventory
 {
+    public async new Task<bool> ExistsAsync(Product entity)
+    {
+        return await DbContext.Inventories.AnyAsync(x => x.InventoryId == entity.InventoryId);
+    }
 }
 

@@ -29,9 +29,4 @@ public class RepositoryProduct : RepositoryBase<Product>, IRepositoryProduct
 
         return await UpsertAsync(entity, exists);
     }
-
-    public async new Task<bool> ExistsAsync(Product entity) 
-    {
-        return await DbContext.Products.AnyAsync(x => x.ProductId == entity.ProductId);
-    }
 }
