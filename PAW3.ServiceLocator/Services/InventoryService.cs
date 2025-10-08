@@ -18,5 +18,4 @@ public class InventoryService(IRestProvider restProvider, IConfiguration configu
         var response = await restProvider.GetAsync(url, null);
         return await JsonProvider.DeserializeAsync<IEnumerable<InventoryDTO>>(response);
     }
-
 }

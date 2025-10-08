@@ -39,35 +39,35 @@ namespace PAW3.Core.BusinessLogic
         Task<Inventory> GetInventory(int id);
     }
 
-    public class InventoryBusiness(IRepositoryInventory repoInvetory) : IInventoryBusiness
+    public class InventoryBusiness(IRepositoryInventory repoInventory) : IInventoryBusiness
     {
         /// </inheritdoc>
         public async Task<bool> SaveInventoryAsync(Inventory inventory)
         {
             //Business logic here
-            return await repoInvetory.UpdateAsync(inventory);
+            return await repoInventory.UpdateAsync(inventory);
         }
 
         /// </inheritdoc>
         public async Task<bool> DeleteInventoryAsync(int id)
         {
             //Business logic here
-            var inventory = await repoInvetory.FindAsync(id);
-            return await repoInvetory.DeleteAsync(inventory);
+            var inventory = await repoInventory.FindAsync(id);
+            return await repoInventory.DeleteAsync(inventory);
         }
 
         /// </inheritdoc>
         public async Task<IEnumerable<Inventory>> GetInventories()
         {
             //Business logic here
-            return await repoInvetory.ReadAsync();
+            return await repoInventory.ReadAsync();
         }
 
         /// </inheritdoc
         public async Task<Inventory> GetInventory(int id)
         {
             //Business logic here
-            return await repoInvetory.FindAsync(id);
+            return await repoInventory.FindAsync(id);
         }
     }
 }

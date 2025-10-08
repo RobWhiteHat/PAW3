@@ -18,13 +18,20 @@ public interface IProductBusiness
     /// <returns></returns>
     Task<bool> DeleteProductAsync(int id);
     /// <summary>
-    /// 
+    /// Gets the product associated with the product id.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<IEnumerable<Product>> GetProducts(int? id);
+    Task<Product> GetProduct(int id);
+
     /// <summary>
-    /// 
+    /// Get all products.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Product>> GetProducts();
+    /// <summary>
+    /// Gets the product item with the specified identifier.
     /// </summary>
     /// <param name="product"></param>
     /// <returns></returns>
@@ -49,11 +56,16 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     }
 
     /// </inheritdoc>
-    public async Task<IEnumerable<Product>> GetProducts(int? id)
+    public async Task<IEnumerable<Product>> GetProducts()
     {
-        return id == null
-            ? await repositoryProduct.ReadAsync()
-            : [await repositoryProduct.FindAsync((int)id)];
+        return await repositoryProduct.ReadAsync();
+    }
+
+    /// </inheritdoc
+    public async Task<Product> GetProduct(int id)
+    {
+        //Business logic here
+        return await repositoryProduct.FindAsync(id);
     }
 }
 

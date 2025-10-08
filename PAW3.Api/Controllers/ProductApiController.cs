@@ -12,18 +12,19 @@ namespace PAW3.Api.Controllers
     {
         // GET: api/<ProductApiController>
         [HttpGet]
-        public async Task<IEnumerable<Product>> Get()
+        public async Task<IEnumerable<Product>> GetAsync()
         {
-            return await productBusiness.GetProducts(id: null);
+            return await productBusiness.GetProducts();
         }
 
         // GET api/<ProductApiController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<Product> GetAsync(int id)
         {
-            return "value";
+            return await productBusiness.GetProduct(id);
         }
 
+        /*
         // POST api/<ProductApiController>
         [HttpPost]
         public void Post([FromBody] string value)
@@ -41,5 +42,6 @@ namespace PAW3.Api.Controllers
         public void Delete(int id)
         {
         }
+        */
     }
 }

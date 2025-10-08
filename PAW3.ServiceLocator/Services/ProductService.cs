@@ -8,6 +8,9 @@ namespace PAW3.ServiceLocator.Services;
 public interface IProductService
 {
     Task<IEnumerable<ProductDTO>> GetDataAsync();
+
+    //Task<ProductDTO> GetDataAsync(string id);
+
 }
 
 public class ProductService(IRestProvider restProvider, IConfiguration configuration) : IService<ProductDTO>, IProductService
@@ -18,5 +21,12 @@ public class ProductService(IRestProvider restProvider, IConfiguration configura
         var response = await restProvider.GetAsync(url, null);
         return await JsonProvider.DeserializeAsync<IEnumerable<ProductDTO>>(response);
     }
+
+    //public async Task<ProductDTO> GetDataAsync(string id)
+    //{
+    //    var url = configuration.GetStringFromAppSettings("APIS", "Product");
+    //    var response = await restProvider.GetAsync(url, id);
+    //    return await JsonProvider.DeserializeAsync<ProductDTO>(response);
+    //}
 
 }

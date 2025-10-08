@@ -58,7 +58,7 @@ public partial class ProductDbContext : DbContext
         {
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
-                .HasColumnType("numeric(18, 0)")
+                .HasColumnType("int")
                 .HasColumnName("ID");
             entity.Property(e => e.Content)
                 .HasMaxLength(100)

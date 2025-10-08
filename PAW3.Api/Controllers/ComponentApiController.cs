@@ -8,36 +8,36 @@ namespace PAW3.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InventoryApiController(IInventoryBusiness inventoryBusiness) : ControllerBase
+    public class ComponentApiController(IComponentBusiness componentBusiness) : ControllerBase
     {
-        // GET: api/<InventoryApiController>
+        // GET: api/<ComponentApiController>
         [HttpGet]
-        public async Task<IEnumerable<Inventory>> GetAsync()
+        public async Task<IEnumerable<Component>> GetAsync()
         {
-            return await inventoryBusiness.GetInventories();
+            return await componentBusiness.GetComponents();
         }
 
-        // GET api/<InventoryApiController>/5
+        // GET api/<ComponentApiController>/5
         [HttpGet("{id}")]
-        public async Task<Inventory> GetAsync(int id)
+        public async Task<Component> GetAsync(int id)
         {
-            return await inventoryBusiness.GetInventory(id);
+            return await componentBusiness.GetComponent(id);
         }
 
         /*
-        // POST api/<InventoryApiController>
+        // POST api/<ComponentApiController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<InventoryApiController>/5
+        // PUT api/<ComponentApiController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<InventoryApiController>/5
+        // DELETE api/<ComponentApiController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

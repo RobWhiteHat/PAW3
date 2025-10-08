@@ -20,6 +20,55 @@ public class ServiceControllerBase : ControllerBase
                 return data.Cast<object>();
             },
 
+            ["inventory"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<InventoryDTO>("inventory");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+            ["category"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<CategoryDTO>("category");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+            ["component"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<ComponentDTO>("component");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+            ["notification"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<NotificationDTO>("notification");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+            ["role"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<RoleDTO>("role");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+            ["supplier"] = async () =>
+            {
+                // defer resolution until invocation time
+                var service = await serviceMapper.GetServiceAsync<SupplierDTO>("supplier");
+                var data = await service.GetDataAsync();
+                return data.Cast<object>();
+            },
+
+
             // Example for another service:
             // ["category"] = async () =>
             // {

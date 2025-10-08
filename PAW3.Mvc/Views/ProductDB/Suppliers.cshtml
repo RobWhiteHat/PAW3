@@ -1,0 +1,41 @@
+﻿@model ProductDBViewModel
+@{}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to @Model.Title</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Supplier name</th>
+            <th>Contact name</th>
+            <th>Contact title</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Last modified</th>
+            <th>Modified by</th>
+        </tr>
+    </thead>
+    <tbody>        
+        @foreach (var item in Model.Supplier)
+        {
+            <tr>
+                <td>@item.SupplierId</td>
+                <td>@item.SupplierName</td>
+                <td>@item.ContactName</td>
+                <td>@item.ContactTitle</td>
+                <td>@item.Phone</td>
+                <td>@item.Address</td>
+                <td>@item.City</td>
+                <td>@item.Country</td>
+                <td>@item.LastModified</td>
+                <td>@item.ModifiedBy</td>
+            </tr>
+        }        
+    </tbody>
+</table>
