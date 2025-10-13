@@ -25,11 +25,25 @@ public interface IProductBusiness
     Task<Product> GetProduct(int id);
 
     /// <summary>
+    /// Update the product
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
+    Task<bool> UpdateProductAsync(Product product);
+
+    /// <summary>
     /// Get all products.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     Task<IEnumerable<Product>> GetProducts();
+
+    /// <summary>
+    /// Gets all products that are in inventory (InventoryId =! NULL).
+    /// </summary>
+    /// <returns></returns>
+    Task<IEnumerable<Product>> GetProductsInInventory();
+
     /// <summary>
     /// Gets the product item with the specified identifier.
     /// </summary>
@@ -43,9 +57,15 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     /// </inheritdoc>
     public async Task<bool> SaveProductAsync(Product product)
     {
-        // que tengan mas de 5 quantity
-        // sabado o domingo solo puedo salvar de 8 a 12
-        return await repositoryProduct.UpdateAsync(product);
+        //Business logic here
+        return await repositoryProduct.UpsertAsync(product, false);
+    }
+
+    /// </inheritdoc>
+    public async Task<bool> UpdateProductAsync(Product product)
+    {
+        //Business logic here
+        return await repositoryProduct.UpsertAsync(product, true);
     }
 
     /// </inheritdoc>
@@ -59,6 +79,14 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     public async Task<IEnumerable<Product>> GetProducts()
     {
         return await repositoryProduct.ReadAsync();
+    }
+
+    /// </inheritdoc>
+    public async Task<IEnumerable<Product>> GetProductsInInventory()
+    {
+        var products = await repositoryProduct.ReadAsync();
+
+        return products = products.Where(p => p.InventoryId != null);
     }
 
     /// </inheritdoc

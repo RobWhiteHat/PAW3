@@ -24,25 +24,40 @@ namespace PAW3.Api.Controllers
             return await componentBusiness.GetComponent(id);
         }
 
-        /*
-        // POST api/<ComponentApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Component component)
         {
+            bool result = await componentBusiness.SaveComponentAsync(component);
+            if (!result)
+                return BadRequest("Component not inserted");
+
+            return Ok($"Component #{component.Id} created");
         }
 
-        // PUT api/<ComponentApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Component component)
         {
+            if (id != component.Id)
+                return BadRequest("Component not inserted");
+
+            bool result = await componentBusiness.UpdateComponentAsync(component);
+
+            if (!result)
+                return BadRequest("Component not inserted");
+
+            return Ok($"Component #{component.Id} updated");
         }
 
-        // DELETE api/<ComponentApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await componentBusiness.DeleteComponentAsync(id);
+
+            if (!result)
+                return BadRequest("Component not deleted");
+
+            return Ok($"Component #{id} deleted");
         }
-        */
 
     }
 }

@@ -18,6 +18,13 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveComponentAsync(Component component);
 
         /// <summary>
+        /// Update the component
+        /// </summary>
+        /// <param name="component"></param>
+        /// <returns></returns>
+        Task<bool> UpdateComponentAsync(Component component);
+
+        /// <summary>
         /// Deletes the component item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -37,6 +44,7 @@ namespace PAW3.Core.BusinessLogic
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Component> GetComponent(int id);
+        
     }
 
     public class ComponentBusiness(IRepositoryComponent repoComponent) : IComponentBusiness
@@ -45,7 +53,14 @@ namespace PAW3.Core.BusinessLogic
         public async Task<bool> SaveComponentAsync(Component component)
         {
             //Business logic here
-            return await repoComponent.UpdateAsync(component);
+            return await repoComponent.UpsertAsync(component, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateComponentAsync(Component component)
+        {
+            //Business logic here
+            return await repoComponent.UpsertAsync(component, true);
         }
 
         /// </inheritdoc>

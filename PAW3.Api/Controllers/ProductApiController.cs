@@ -24,24 +24,39 @@ namespace PAW3.Api.Controllers
             return await productBusiness.GetProduct(id);
         }
 
-        /*
-        // POST api/<ProductApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Product product)
         {
+            bool result = await productBusiness.SaveProductAsync(product);
+            if (!result)
+                return BadRequest("Product not inserted");
+
+            return Ok($"Product #{product.ProductId} created");
         }
 
-        // PUT api/<ProductApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Product product)
         {
+            if (id != product.ProductId)
+                return BadRequest("Product not inserted");
+
+            bool result = await productBusiness.UpdateProductAsync(product);
+
+            if (!result)
+                return BadRequest("Product not inserted");
+
+            return Ok($"Product #{product.ProductId} updated");
         }
 
-        // DELETE api/<ProductApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await productBusiness.DeleteProductAsync(id);
+
+            if (!result)
+                return BadRequest("Product not deleted");
+
+            return Ok($"Product #{id} deleted");
         }
-        */
     }
 }
