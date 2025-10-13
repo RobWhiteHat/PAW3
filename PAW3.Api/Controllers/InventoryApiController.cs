@@ -24,25 +24,40 @@ namespace PAW3.Api.Controllers
             return await inventoryBusiness.GetInventory(id);
         }
 
-        /*
-        // POST api/<InventoryApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Inventory inventory)
         {
+            bool result = await inventoryBusiness.SaveInventoryAsync(inventory);
+            if (!result)
+                return BadRequest("Inventory not inserted");
+
+            return Ok($"Inventory #{inventory.InventoryId} created");
         }
 
-        // PUT api/<InventoryApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Inventory inventory)
         {
+            if (id != inventory.InventoryId)
+                return BadRequest("Inventory not inserted");
+
+            bool result = await inventoryBusiness.UpdateInventoryAsync(inventory);
+
+            if (!result)
+                return BadRequest("Inventory not inserted");
+
+            return Ok($"Inventory #{inventory.InventoryId} updated");
         }
 
-        // DELETE api/<InventoryApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await inventoryBusiness.DeleteInventoryAsync(id);
+
+            if (!result)
+                return BadRequest("Inventory not deleted");
+
+            return Ok($"Inventory #{id} deleted");
         }
-        */
 
     }
 }

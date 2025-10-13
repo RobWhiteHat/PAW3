@@ -13,6 +13,14 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveNotificationAsync(Notification notification);
 
         /// <summary>
+        /// Update the notification
+        /// </summary>
+        /// <param name="notification"></param>
+        /// <returns></returns>
+        Task<bool> UpdateNotificationAsync(Notification notification);
+
+
+        /// <summary>
         /// Deletes the inventory item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -37,10 +45,17 @@ namespace PAW3.Core.BusinessLogic
     public class NotificationBusiness(IRepositoryNotification repoNotification) : INotificationBusiness
     {
         /// </inheritdoc>
-        public async Task<bool> SaveNotificationAsync(Notification inventory)
+        public async Task<bool> SaveNotificationAsync(Notification notification)
         {
             //Business logic here
-            return await repoNotification.UpdateAsync(inventory);
+            return await repoNotification.UpsertAsync(notification, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateNotificationAsync(Notification notification)
+        {
+            //Business logic here
+            return await repoNotification.UpsertAsync(notification, true);
         }
 
         /// </inheritdoc>

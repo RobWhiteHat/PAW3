@@ -24,25 +24,40 @@ namespace PAW3.Api.Controllers
             return await supplierBusiness.GetSupplier(id);
         }
 
-        /*
-        // POST api/<SupplierApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Supplier supplier)
         {
+            bool result = await supplierBusiness.SaveSupplierAsync(supplier);
+            if (!result)
+                return BadRequest("Supplier not inserted");
+
+            return Ok($"Supplier #{supplier.SupplierId} created");
         }
 
-        // PUT api/<SupplierApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Supplier supplier)
         {
+            if (id != supplier.SupplierId)
+                return BadRequest("Supplier not inserted");
+
+            bool result = await supplierBusiness.UpdateSupplierAsync(supplier);
+
+            if (!result)
+                return BadRequest("Supplier not inserted");
+
+            return Ok($"Supplier #{supplier.SupplierId} updated");
         }
 
-        // DELETE api/<SupplierApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await supplierBusiness.DeleteSupplierAsync(id);
+
+            if (!result)
+                return BadRequest("Supplier not deleted");
+
+            return Ok($"Supplier #{id} deleted");
         }
-        */
 
     }
 }

@@ -13,6 +13,13 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveRoleAsync(Role role);
 
         /// <summary>
+        /// Update the role
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        Task<bool> UpdateRoleAsync(Role role);
+
+        /// <summary>
         /// Deletes the inventory item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -40,7 +47,14 @@ namespace PAW3.Core.BusinessLogic
         public async Task<bool> SaveRoleAsync(Role role)
         {
             //Business logic here
-            return await repoRole.UpdateAsync(role);
+            return await repoRole.UpsertAsync(role, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateRoleAsync(Role role)
+        {
+            //Business logic here
+            return await repoRole.UpsertAsync(role, true);
         }
 
         /// </inheritdoc>

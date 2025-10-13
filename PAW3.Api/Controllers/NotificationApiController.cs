@@ -24,25 +24,40 @@ namespace PAW3.Api.Controllers
             return await notificationBusiness.GetNotification(id);
         }
 
-        /*
-        // POST api/<NotificationApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Notification notification)
         {
+            bool result = await notificationBusiness.SaveNotificationAsync(notification);
+            if (!result)
+                return BadRequest("Notification not inserted");
+
+            return Ok($"Notification #{notification.Id} created");
         }
 
-        // PUT api/<NotificationApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Notification notification)
         {
+            if (id != notification.Id)
+                return BadRequest("Notification not inserted");
+
+            bool result = await notificationBusiness.UpdateNotificationAsync(notification);
+
+            if (!result)
+                return BadRequest("Notification not inserted");
+
+            return Ok($"Notification #{notification.Id} updated");
         }
 
-        // DELETE api/<NotificationApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await notificationBusiness.DeleteNotificationAsync(id);
+
+            if (!result)
+                return BadRequest("Notification not deleted");
+
+            return Ok($"Notification #{id} deleted");
         }
-        */
 
     }
 }

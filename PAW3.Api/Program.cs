@@ -18,6 +18,10 @@ builder.Services.AddScoped<IComponentBusiness, ComponentBusiness>();
 builder.Services.AddScoped<INotificationBusiness, NotificationBusiness>();
 builder.Services.AddScoped<IRoleBusiness, RoleBusiness>();
 builder.Services.AddScoped<ISupplierBusiness, SupplierBusiness>();
+builder.Services.AddScoped<ITaskBusiness, TaskBusiness>();
+builder.Services.AddScoped<IUserActionBusiness, UserActionBusiness>();
+builder.Services.AddScoped<IUserBusiness, UserBusiness>();
+builder.Services.AddScoped<IUserRoleBusiness, UserRoleBusiness>();
 
 //Data Repositories
 builder.Services.AddScoped<IRepositoryProduct, RepositoryProduct>(); 
@@ -27,6 +31,10 @@ builder.Services.AddScoped<IRepositoryComponent, RepositoryComponent>();
 builder.Services.AddScoped<IRepositoryNotification, RepositoryNotification>();
 builder.Services.AddScoped<IRepositoryRole, RepositoryRole>();
 builder.Services.AddScoped<IRepositorySupplier, RepositorySupplier>();
+builder.Services.AddScoped<IRepositoryTask, RepositoryTask>();
+builder.Services.AddScoped<IRepositoryUserAction, RepositoryUserAction>();
+builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
+builder.Services.AddScoped<IRepositoryUserRole, RepositoryUserRole>();
 
 
 var app = builder.Build();

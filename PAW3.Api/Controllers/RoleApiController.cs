@@ -24,25 +24,40 @@ namespace PAW3.Api.Controllers
             return await roleBusiness.GetRole(id);
         }
 
-        /*
-        // POST api/<RoleApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Role role)
         {
+            bool result = await roleBusiness.SaveRoleAsync(role);
+            if (!result)
+                return BadRequest("Role not inserted");
+
+            return Ok($"Role #{role.RoleId} created");
         }
 
-        // PUT api/<RoleApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Role role)
         {
+            if (id != role.RoleId)
+                return BadRequest("Role not inserted");
+
+            bool result = await roleBusiness.UpdateRoleAsync(role);
+
+            if (!result)
+                return BadRequest("Role not inserted");
+
+            return Ok($"Role #{role.RoleId} updated");
         }
 
-        // DELETE api/<RoleApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            bool result = await roleBusiness.DeleteRoleAsync(id);
+
+            if (!result)
+                return BadRequest("Role not deleted");
+
+            return Ok($"Role #{id} deleted");
         }
-        */
 
     }
 }

@@ -18,6 +18,13 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveCategoryAsync(Category category);
 
         /// <summary>
+        /// Update the category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        Task<bool> UpdateCategoryAsync(Category category);
+
+        /// <summary>
         /// Deletes the category item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -37,6 +44,7 @@ namespace PAW3.Core.BusinessLogic
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Category> GetCategory(int id);
+        
     }
 
     public class CategoryBusiness(IRepositoryCategory repoCategory) : ICategoryBusiness
@@ -45,7 +53,14 @@ namespace PAW3.Core.BusinessLogic
         public async Task<bool> SaveCategoryAsync(Category category)
         {
             //Business logic here
-            return await repoCategory.UpdateAsync(category);
+            return await repoCategory.UpsertAsync(category, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateCategoryAsync(Category category)
+        {
+            //Business logic here
+            return await repoCategory.UpsertAsync(category, true);
         }
 
         /// </inheritdoc>

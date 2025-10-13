@@ -13,6 +13,13 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveSupplierAsync(Supplier supplier);
 
         /// <summary>
+        /// Update the supplier
+        /// </summary>
+        /// <param name="supplier"></param>
+        /// <returns></returns>
+        Task<bool> UpdateSupplierAsync(Supplier supplier);
+
+        /// <summary>
         /// Deletes the supplier item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -40,7 +47,14 @@ namespace PAW3.Core.BusinessLogic
         public async Task<bool> SaveSupplierAsync(Supplier supplier)
         {
             //Business logic here
-            return await repoSupplier.UpdateAsync(supplier);
+            return await repoSupplier.UpsertAsync(supplier, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateSupplierAsync(Supplier supplier)
+        {
+            //Business logic here
+            return await repoSupplier.UpsertAsync(supplier, true);
         }
 
         /// </inheritdoc>

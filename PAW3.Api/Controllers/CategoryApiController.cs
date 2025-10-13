@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PAW3.Core.BusinessLogic;
 using PAW3.Data.Models;
 
@@ -10,39 +11,51 @@ namespace PAW3.Api.Controllers
     [ApiController]
     public class CategoryApiController(ICategoryBusiness categoryBusiness) : ControllerBase
     {
-        // GET: api/<CategoryApiController>
         [HttpGet]
         public async Task<IEnumerable<Category>> GetAsync()
         {
             return await categoryBusiness.GetCategories();
         }
 
-        // GET api/<CategoryApiController>/5
         [HttpGet("{id}")]
-        public async Task<Category> GetAsync(int id)
+        public async Task<Category> GetByAsync(int id)
         {
             return await categoryBusiness.GetCategory(id);
         }
 
-        /*
-        // POST api/<CategoryApiController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> CreateAsync(Category category)
         {
+            bool result = await categoryBusiness.SaveCategoryAsync(category);
+            if (!result)
+                return BadRequest("Category not inserted");
+
+            return Ok($"Category #{category.CategoryId} created");
         }
 
-        // PUT api/<CategoryApiController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateAsync(int id, Category category)
         {
+            if (id != category.CategoryId)
+                return BadRequest("Category not inserted");
+
+            bool result = await categoryBusiness.UpdateCategoryAsync(category);
+
+            if (!result)
+                return BadRequest("Category not inserted");
+
+            return Ok($"Category #{category.CategoryId} updated");
         }
 
-        // DELETE api/<CategoryApiController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-        }
-        */
+            bool result = await categoryBusiness.DeleteCategoryAsync(id);
 
+            if (!result)
+                return BadRequest("Category not deleted");
+
+            return Ok($"Category #{id} deleted");
+        }
     }
 }

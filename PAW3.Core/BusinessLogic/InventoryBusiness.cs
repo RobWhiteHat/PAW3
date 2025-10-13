@@ -18,6 +18,13 @@ namespace PAW3.Core.BusinessLogic
         Task<bool> SaveInventoryAsync(Inventory inventory);
 
         /// <summary>
+        /// Update the inventory
+        /// </summary>
+        /// <param name="inventory"></param>
+        /// <returns></returns>
+        Task<bool> UpdateInventoryAsync(Inventory inventory);
+
+        /// <summary>
         /// Deletes the inventory item with the specified identifier.
         /// </summary>
         /// <param name="id"></param>
@@ -37,6 +44,7 @@ namespace PAW3.Core.BusinessLogic
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Inventory> GetInventory(int id);
+        
     }
 
     public class InventoryBusiness(IRepositoryInventory repoInventory) : IInventoryBusiness
@@ -45,7 +53,14 @@ namespace PAW3.Core.BusinessLogic
         public async Task<bool> SaveInventoryAsync(Inventory inventory)
         {
             //Business logic here
-            return await repoInventory.UpdateAsync(inventory);
+            return await repoInventory.UpsertAsync(inventory, false);
+        }
+
+        /// </inheritdoc>
+        public async Task<bool> UpdateInventoryAsync(Inventory inventory)
+        {
+            //Business logic here
+            return await repoInventory.UpsertAsync(inventory, true);
         }
 
         /// </inheritdoc>
