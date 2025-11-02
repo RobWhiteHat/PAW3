@@ -1,4 +1,4 @@
-﻿using PAW3.Data.Models;
+﻿    using PAW3.Data.Models;
 using PAW3.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -52,6 +52,8 @@ namespace PAW3.Core.BusinessLogic
         /// </inheritdoc>
         public async Task<bool> SaveCategoryAsync(Category category)
         {
+            category.ModifiedBy ??= "System";
+            category.LastModified = DateTime.UtcNow;
             //Business logic here
             return await repoCategory.UpsertAsync(category, false);
         }
@@ -59,6 +61,8 @@ namespace PAW3.Core.BusinessLogic
         /// </inheritdoc>
         public async Task<bool> UpdateCategoryAsync(Category category)
         {
+            category.ModifiedBy ??= "System";
+            category.LastModified = DateTime.UtcNow;
             //Business logic here
             return await repoCategory.UpsertAsync(category, true);
         }

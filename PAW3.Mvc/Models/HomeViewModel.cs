@@ -9,4 +9,6 @@ public class HomeViewModel
     public IEnumerable<string> Items { get; set; } = [];
     public object Dog { get; set; }
     public IEnumerable<ProductDTO> Products { get; set; } = [];
+
+    public IEnumerable<CategoryDTO> Categories { get; set; }
 }

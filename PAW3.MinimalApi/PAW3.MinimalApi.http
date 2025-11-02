@@ -1,0 +1,10 @@
+﻿@PAW3.MinimalApi_HostAddress = https://localhost:7178
+
+
+POST {{PAW3.MinimalApi_HostAddress}}/ProductItems
+
+###
+
+POST {{PAW3.MinimalApi_HostAddress}}/ProductItems
+
+###

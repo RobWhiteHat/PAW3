@@ -1,28 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Models.DTOs;
 using PAW3.Mvc.Models;
-using PAW3.Mvc.ServiceLocator;
-using PAW3.ServiceLocator.Helper;
-using System.Diagnostics;
+using PAW3.ServiceLocator.Services.Contracts;
+
 
 namespace PAW3.Mvc.Controllers
 {
     public class ProductDBController : Controller
     {
         private readonly ILogger<ProductDBController> _logger;
-        private readonly IServiceLocatorService _serviceLocator;
-        private readonly IServiceMapper _serviceMapper;
-
-        public ProductDBController(ILogger<ProductDBController> logger, IServiceLocatorService serviceLocator, IServiceMapper serviceMapper)
+        private readonly IService<CategoryDTO> _service;
+        public ProductDBController(ILogger<ProductDBController> logger, IService<CategoryDTO> service)
         {
             _logger = logger;
-            _serviceLocator = serviceLocator;
-            _serviceMapper = serviceMapper;
+            _service = service;
         }
 
         public async Task<IActionResult> Products()
         {
-            var products = await _serviceLocator.GetDataAsync<ProductDTO>("product");
+            var products = await _service.GetDataAsync<ProductDTO>("Product");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Products",
@@ -33,8 +29,8 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Inventories()
         {
-            var inventories = await _serviceLocator.GetDataAsync<InventoryDTO>("inventory");
-            var products = await _serviceLocator.GetDataAsync<ProductDTO>("product");
+            var inventories = await _serviceService.GetDataAsync<InventoryDTO>("Inventory");
+            var products = await _serviceService.GetDataAsync<ProductDTO>("Product");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Inventory",
@@ -46,7 +42,7 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Categories()
         {
-            var categories = await _serviceLocator.GetDataAsync<CategoryDTO>("category");
+            var categories = await _serviceService.GetDataAsync<CategoryDTO>("Category");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Categories",
@@ -57,7 +53,7 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Components()
         {
-            var components = await _serviceLocator.GetDataAsync<ComponentDTO>("component");
+            var components = await _serviceService.GetDataAsync<ComponentDTO>("Component");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Components",
@@ -68,7 +64,7 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Notifications()
         {
-            var notifications = await _serviceLocator.GetDataAsync<NotificationDTO>("notification");
+            var notifications = await _serviceService.GetDataAsync<NotificationDTO>("notification");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Notifications",
@@ -80,7 +76,7 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Roles()
         {
-            var roles = await _serviceLocator.GetDataAsync<RoleDTO>("role");
+            var roles = await _serviceService.GetDataAsync<RoleDTO>("role");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Roles",
@@ -91,7 +87,7 @@ namespace PAW3.Mvc.Controllers
 
         public async Task<IActionResult> Suppliers()
         {
-            var supplier = await _serviceLocator.GetDataAsync<SupplierDTO>("supplier");
+            var supplier = await _serviceService.GetDataAsync<SupplierDTO>("supplier");
             var viewModel = new ProductDBViewModel()
             {
                 Title = "Suppliers",
@@ -99,6 +95,8 @@ namespace PAW3.Mvc.Controllers
             };
             return View(viewModel);
         }
+
+
 
 
         ///* **EXAMPLE** use to add more views...*/

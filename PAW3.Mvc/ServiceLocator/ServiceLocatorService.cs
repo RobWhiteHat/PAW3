@@ -9,7 +9,7 @@ public interface IServiceLocatorService
     Task<IEnumerable<T>> GetDataAsync<T>(string name);
 }
 
-public class ServiceLocatorService(IRestProvider restProvider, IServiceMapper serviceMapper) : IServiceLocatorService
+public class ServiceLocatorService(IRestProvider restProvider) : IServiceLocatorService
 {
     public async Task<IEnumerable<T>> GetDataAsync<T>(string name)
     {

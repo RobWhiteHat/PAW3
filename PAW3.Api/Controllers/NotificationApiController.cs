@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Notification notification)
         {
-            if (id != notification.Id)
-                return BadRequest("Notification not inserted");
+            notification.Id = id;
 
             bool result = await notificationBusiness.UpdateNotificationAsync(notification);
 

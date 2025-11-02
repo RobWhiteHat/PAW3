@@ -31,21 +31,20 @@ namespace PAW3.Api.Controllers
             if (!result)
                 return BadRequest("Product not inserted");
 
-            return Ok($"Product #{product.ProductId} created");
+            return Ok($"OK Product #{product.ProductId} created");
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Product product)
         {
-            if (id != product.ProductId)
-                return BadRequest("Product not inserted");
+            product.ProductId = id; 
 
             bool result = await productBusiness.UpdateProductAsync(product);
 
             if (!result)
                 return BadRequest("Product not inserted");
 
-            return Ok($"Product #{product.ProductId} updated");
+            return Ok($"OK Product #{product.ProductId} updated");
         }
 
         [HttpDelete("{id}")]
@@ -56,7 +55,7 @@ namespace PAW3.Api.Controllers
             if (!result)
                 return BadRequest("Product not deleted");
 
-            return Ok($"Product #{id} deleted");
+            return Ok($"OK Product #{id} deleted");
         }
     }
 }

@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Inventory inventory)
         {
-            if (id != inventory.InventoryId)
-                return BadRequest("Inventory not inserted");
+            inventory.InventoryId = id;
 
             bool result = await inventoryBusiness.UpdateInventoryAsync(inventory);
 

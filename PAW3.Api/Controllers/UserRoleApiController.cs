@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, UserRole userRole)
         {
-            if (id != userRole.Id)
-                return BadRequest("User Action not inserted");
+            userRole.Id = id;
 
             bool result = await userRoleBusiness.UpdateUserRoleAsync(userRole);
 

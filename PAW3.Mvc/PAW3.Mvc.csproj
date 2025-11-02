@@ -7,6 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ProductDBController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\ProductDB\Components.cshtml" />
+    <Content Remove="Views\ProductDB\Inventories.cshtml" />
+    <Content Remove="Views\ProductDB\Notifications.cshtml" />
+    <Content Remove="Views\ProductDB\Products.cshtml" />
+    <Content Remove="Views\ProductDB\Roles.cshtml" />
+    <Content Remove="Views\ProductDB\Suppliers.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PAW3.ServiceLocator\PAW3.ServiceLocator.csproj" />
   </ItemGroup>
 

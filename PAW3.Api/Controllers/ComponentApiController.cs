@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Component component)
         {
-            if (id != component.Id)
-                return BadRequest("Component not inserted");
+            component.Id = id;
 
             bool result = await componentBusiness.UpdateComponentAsync(component);
 

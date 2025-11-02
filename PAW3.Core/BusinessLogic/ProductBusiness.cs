@@ -45,11 +45,18 @@ public interface IProductBusiness
     Task<IEnumerable<Product>> GetProductsInInventory();
 
     /// <summary>
-    /// Gets the product item with the specified identifier.
+    /// Creates the product item.
     /// </summary>
     /// <param name="product"></param>
     /// <returns></returns>
     Task<bool> SaveProductAsync(Product product);
+
+    /// <summary>
+    /// Check if the product exists.
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
+    Task<bool> FindProduct(Product product);
 }
 
 public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBusiness
@@ -57,6 +64,8 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     /// </inheritdoc>
     public async Task<bool> SaveProductAsync(Product product)
     {
+        product.ModifiedBy ??= "System";
+        product.LastModified = DateTime.UtcNow;
         //Business logic here
         return await repositoryProduct.UpsertAsync(product, false);
     }
@@ -64,7 +73,9 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     /// </inheritdoc>
     public async Task<bool> UpdateProductAsync(Product product)
     {
-        //Business logic here
+        product.ModifiedBy ??= "System";
+        product.LastModified = DateTime.UtcNow;
+        //Business logic here 
         return await repositoryProduct.UpsertAsync(product, true);
     }
 
@@ -89,11 +100,17 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
         return products = products.Where(p => p.InventoryId != null);
     }
 
-    /// </inheritdoc
+    /// </inheritdoc>
     public async Task<Product> GetProduct(int id)
     {
         //Business logic here
         return await repositoryProduct.FindAsync(id);
+    }
+
+    /// </inheritdoc>
+    public async Task<bool> FindProduct(Product product)
+    {
+        return await repositoryProduct.ExistsAsync(product);
     }
 }
 

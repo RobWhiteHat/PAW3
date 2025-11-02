@@ -30,21 +30,20 @@ namespace PAW3.Api.Controllers
             if (!result)
                 return BadRequest("Category not inserted");
 
-            return Ok($"Category #{category.CategoryId} created");
+            return Ok($"OK Category #{category.CategoryId} created");
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Category category)
         {
-            if (id != category.CategoryId)
-                return BadRequest("Category not inserted");
+            category.CategoryId = id;
 
             bool result = await categoryBusiness.UpdateCategoryAsync(category);
 
             if (!result)
                 return BadRequest("Category not inserted");
 
-            return Ok($"Category #{category.CategoryId} updated");
+            return Ok($"OK Category #{category.CategoryId} updated");
         }
 
         [HttpDelete("{id}")]
@@ -55,7 +54,7 @@ namespace PAW3.Api.Controllers
             if (!result)
                 return BadRequest("Category not deleted");
 
-            return Ok($"Category #{id} deleted");
+            return Ok($"OK Category #{id} deleted");
         }
     }
 }

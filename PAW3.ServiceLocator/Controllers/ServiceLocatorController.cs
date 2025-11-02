@@ -9,7 +9,7 @@ namespace PAW3.ServiceLocator.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ServiceLocatorController(IServiceMapper serviceMapper) : ServiceControllerBase(serviceMapper)
+public class ServiceLocatorController(IServiceMapper serviceMapper, ICategoryService categoryService) : ServiceControllerBase(serviceMapper, categoryService)
 {
     // GET api/<ServiceLocatorController>/5
     [HttpGet("{name}")]
@@ -20,6 +20,31 @@ public class ServiceLocatorController(IServiceMapper serviceMapper) : ServiceCon
 
         return [];
     }
+
+    [HttpPost("{name}")]
+    public async Task<IActionResult> Post(string name, [FromBody] object dto)
+    {
+        if (dto is null)
+            return BadRequest("No body detected");
+
+        if (PostResolvers.TryGetValue(name.ToLower(), out var resolver))
+        {
+            // Por ejemplo, algunos resolvers podrían aceptar payload
+            var result = await resolver(dto);
+            return Ok(result);
+        }
+
+        return NotFound();
+    }
+
+    //[HttpPost("{name}")]
+    //public async Task<IEnumerable<object>> Post(string name)
+    //{
+    //    if (ServiceResolvers.TryGetValue(name.ToLower(), out var resolver))
+    //        return await resolver();
+
+    //    return [];
+    //}
 
     /*
     // POST api/<ServiceLocatorController>

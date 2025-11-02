@@ -56,8 +56,12 @@ public class RestProvider : IRestProvider
 	{
 		try
 		{
-			var response = await RestProviderHelpers.CreateHttpClient(endpoint)
-				.GetAsync(id);
+            string fullUrl = string.IsNullOrEmpty(id)
+                ? endpoint
+                : $"{endpoint}/{id}";
+
+            var response = await RestProviderHelpers.CreateHttpClient(endpoint)
+					.GetAsync(fullUrl);
 			return await RestProviderHelpers.GetResponse(response);
 		}
 		catch (Exception ex)
@@ -76,7 +80,7 @@ public class RestProvider : IRestProvider
 	{
 		try
 		{
-			var response = await RestProviderHelpers.CreateHttpClient(endpoint)
+            var response = await RestProviderHelpers.CreateHttpClient(endpoint)
 				.PostAsync(endpoint, RestProviderHelpers.CreateContent(content));
 			var result = await RestProviderHelpers.GetResponse(response);
 			return result;
@@ -98,8 +102,9 @@ public class RestProvider : IRestProvider
 	{
 		try
 		{
-			var response = await RestProviderHelpers.CreateHttpClient(endpoint)
-				.PutAsync(id, RestProviderHelpers.CreateContent(content));
+            var fullUrl = $"{endpoint}/{id}";
+            var response = await RestProviderHelpers.CreateHttpClient(fullUrl)
+				.PutAsync(fullUrl, RestProviderHelpers.CreateContent(content));
 			var result = await RestProviderHelpers.GetResponse(response);
 			return result;
 		}
@@ -119,7 +124,9 @@ public class RestProvider : IRestProvider
 	{
 		try
 		{
-			var response = await RestProviderHelpers.CreateHttpClient(endpoint)
+            var fullUrl = $"{endpoint}/{id}";
+            
+			var response = await RestProviderHelpers.CreateHttpClient(fullUrl)
 				.DeleteAsync(id);
 			var result = await RestProviderHelpers.GetResponse(response);
 			return result;

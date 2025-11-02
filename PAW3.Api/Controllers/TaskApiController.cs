@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Data.Models.Task task)
         {
-            if (id != task.Id)
-                return BadRequest("Task not inserted");
+            task.Id = id;
 
             bool result = await taskBusiness.UpdateTaskAsync(task);
 

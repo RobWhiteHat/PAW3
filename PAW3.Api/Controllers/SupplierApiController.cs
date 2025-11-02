@@ -37,8 +37,7 @@ namespace PAW3.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, Supplier supplier)
         {
-            if (id != supplier.SupplierId)
-                return BadRequest("Supplier not inserted");
+            supplier.SupplierId = id;
 
             bool result = await supplierBusiness.UpdateSupplierAsync(supplier);
 
