@@ -111,6 +111,8 @@ namespace PAW3.Mvc.Controllers
                 TempData["Error"] = "Producto no encontrado.";
                 return RedirectToAction("Categories");
             }
+            var categories = await _categoryService.GetDataAsync();
+            ViewBag.Categories = new SelectList(categories, "CategoryId", "CategoryName");
             return View(editProduct, product);
         }
 

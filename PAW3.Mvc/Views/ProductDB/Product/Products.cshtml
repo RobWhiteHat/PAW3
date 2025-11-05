@@ -32,12 +32,14 @@
                 <td>@item.Rating</td>
                 <td>@item.LastModified</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.CategoryId" class="btn btn-sm btn-warning">
+                    <a asp-action="EditProduct" asp-route-id="@item.ProductId" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil-square"></i> Editar
                     </a>
-                    <a asp-action="Delete" asp-route-id="@item.CategoryId" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </a>
+                    <form asp-action="DeleteProduct" asp-route-id="@item.ProductId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </form>
                 </td>
             </tr>
         }
