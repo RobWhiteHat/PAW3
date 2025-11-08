@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PAW3.Models.DTOs;
+using PAW3.Models.Entities;
 using PAW3.ServiceLocator.Helper;
 
 namespace PAW3.ServiceLocator.Controllers;
@@ -15,64 +15,15 @@ public class ServiceControllerBase : ControllerBase
             ["product"] = async () =>
             {
                 // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<ProductDTO>("product");
+                var service = await serviceMapper.GetServiceAsync<Product>("product");
                 var data = await service.GetDataAsync();
                 return data.Cast<object>();
             },
-
-            ["inventory"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<InventoryDTO>("inventory");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
-            ["category"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<CategoryDTO>("category");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
-            ["component"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<ComponentDTO>("component");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
-            ["notification"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<NotificationDTO>("notification");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
-            ["role"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<RoleDTO>("role");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
-            ["supplier"] = async () =>
-            {
-                // defer resolution until invocation time
-                var service = await serviceMapper.GetServiceAsync<SupplierDTO>("supplier");
-                var data = await service.GetDataAsync();
-                return data.Cast<object>();
-            },
-
 
             // Example for another service:
             // ["category"] = async () =>
             // {
-            //     var service = await serviceMapper.GetServiceAsync<CategoryDTO>("category");
+            //     var service = await serviceMapper.GetServiceAsync<Category>("category");
             //     var data = await service.GetDataAsync();
             //     return data.Cast<object>();
             // }

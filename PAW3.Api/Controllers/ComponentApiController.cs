@@ -1,63 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
-using PAW3.Data.Models;
+using PAW3.Models.Entities;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace PAW3.Api.Controllers;
 
-namespace PAW3.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class ComponentApiController(IComponentBusiness componentBusiness) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ComponentApiController(IComponentBusiness componentBusiness) : ControllerBase
+    // GET: api/ComponentApiController
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Component>>> Get()
     {
-        // GET: api/<ComponentApiController>
-        [HttpGet]
-        public async Task<IEnumerable<Component>> GetAsync()
-        {
-            return await componentBusiness.GetComponents();
-        }
+        var components = await componentBusiness.GetComponents(id: null);
+        return Ok(components);
+    }
 
-        // GET api/<ComponentApiController>/5
-        [HttpGet("{id}")]
-        public async Task<Component> GetAsync(int id)
-        {
-            return await componentBusiness.GetComponent(id);
-        }
+    // GET api/ComponentApiController/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Component>> Get(int id)
+    {
+        var components = await componentBusiness.GetComponents(id);
+        var component = components.FirstOrDefault();
+        if (component == null)
+            return NotFound();
+        return Ok(component);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateAsync(Component component)
-        {
-            bool result = await componentBusiness.SaveComponentAsync(component);
-            if (!result)
-                return BadRequest("Component not inserted");
+    // POST api/ComponentApiController
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post([FromBody] Component component)
+    {
+        var result = await componentBusiness.SaveComponentAsync(component);
+        if (result)
+            return CreatedAtAction(nameof(Get), new { id = component.Id }, component);
+        return BadRequest();
+    }
 
-            return Ok($"Component #{component.Id} created");
-        }
+    // PUT api/ComponentApiController/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult<bool>> Put(int id, [FromBody] Component component)
+    {
+        if (id != (int)component.Id)
+            return BadRequest();
+        
+        var result = await componentBusiness.SaveComponentAsync(component);
+        if (result)
+            return Ok(result);
+        return NotFound();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, Component component)
-        {
-            if (id != component.Id)
-                return BadRequest("Component not inserted");
-
-            bool result = await componentBusiness.UpdateComponentAsync(component);
-
-            if (!result)
-                return BadRequest("Component not inserted");
-
-            return Ok($"Component #{component.Id} updated");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            bool result = await componentBusiness.DeleteComponentAsync(id);
-
-            if (!result)
-                return BadRequest("Component not deleted");
-
-            return Ok($"Component #{id} deleted");
-        }
-
+    // DELETE api/ComponentApiController/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        var result = await componentBusiness.DeleteComponentAsync(id);
+        if (result)
+            return Ok(result);
+        return NotFound();
     }
 }
+

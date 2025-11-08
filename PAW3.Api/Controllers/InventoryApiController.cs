@@ -1,63 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
-using PAW3.Data.Models;
+using PAW3.Models.Entities;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace PAW3.Api.Controllers;
 
-namespace PAW3.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class InventoryApiController(IInventoryBusiness inventoryBusiness) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InventoryApiController(IInventoryBusiness inventoryBusiness) : ControllerBase
+    // GET: api/InventoryApiController
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Inventory>>> Get()
     {
-        // GET: api/<InventoryApiController>
-        [HttpGet]
-        public async Task<IEnumerable<Inventory>> GetAsync()
-        {
-            return await inventoryBusiness.GetInventories();
-        }
+        var inventories = await inventoryBusiness.GetInventories(id: null);
+        return Ok(inventories);
+    }
 
-        // GET api/<InventoryApiController>/5
-        [HttpGet("{id}")]
-        public async Task<Inventory> GetAsync(int id)
-        {
-            return await inventoryBusiness.GetInventory(id);
-        }
+    // GET api/InventoryApiController/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Inventory>> Get(int id)
+    {
+        var inventories = await inventoryBusiness.GetInventories(id);
+        var inventory = inventories.FirstOrDefault();
+        if (inventory == null)
+            return NotFound();
+        return Ok(inventory);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateAsync(Inventory inventory)
-        {
-            bool result = await inventoryBusiness.SaveInventoryAsync(inventory);
-            if (!result)
-                return BadRequest("Inventory not inserted");
+    // POST api/InventoryApiController
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post([FromBody] Inventory inventory)
+    {
+        var result = await inventoryBusiness.SaveInventoryAsync(inventory);
+        if (result)
+            return CreatedAtAction(nameof(Get), new { id = inventory.InventoryId }, inventory);
+        return BadRequest();
+    }
 
-            return Ok($"Inventory #{inventory.InventoryId} created");
-        }
+    // PUT api/InventoryApiController/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult<bool>> Put(int id, [FromBody] Inventory inventory)
+    {
+        if (id != inventory.InventoryId)
+            return BadRequest();
+        
+        var result = await inventoryBusiness.SaveInventoryAsync(inventory);
+        if (result)
+            return Ok(result);
+        return NotFound();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, Inventory inventory)
-        {
-            if (id != inventory.InventoryId)
-                return BadRequest("Inventory not inserted");
-
-            bool result = await inventoryBusiness.UpdateInventoryAsync(inventory);
-
-            if (!result)
-                return BadRequest("Inventory not inserted");
-
-            return Ok($"Inventory #{inventory.InventoryId} updated");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            bool result = await inventoryBusiness.DeleteInventoryAsync(id);
-
-            if (!result)
-                return BadRequest("Inventory not deleted");
-
-            return Ok($"Inventory #{id} deleted");
-        }
-
+    // DELETE api/InventoryApiController/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        var result = await inventoryBusiness.DeleteInventoryAsync(id);
+        if (result)
+            return Ok(result);
+        return NotFound();
     }
 }
+

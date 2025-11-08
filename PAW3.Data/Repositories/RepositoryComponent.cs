@@ -1,9 +1,5 @@
-﻿using PAW3.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PAW3.Models.Entities;
+using PAW3.Data.MSSQL;
 
 namespace PAW3.Data.Repositories;
 
@@ -21,4 +17,8 @@ public interface IRepositoryComponent
 
 public class RepositoryComponent : RepositoryBase<Component>, IRepositoryComponent
 {
+    public RepositoryComponent(ProductDbContext context) : base(context)
+    {
+    }
 }
+

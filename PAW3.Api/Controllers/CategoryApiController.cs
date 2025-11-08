@@ -1,61 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
-using PAW3.Data.Models;
+using PAW3.Models.Entities;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace PAW3.Api.Controllers;
 
-namespace PAW3.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class CategoryApiController(ICategoryBusiness categoryBusiness) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoryApiController(ICategoryBusiness categoryBusiness) : ControllerBase
+    // GET: api/CategoryApiController
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Category>>> Get()
     {
-        [HttpGet]
-        public async Task<IEnumerable<Category>> GetAsync()
-        {
-            return await categoryBusiness.GetCategories();
-        }
+        var categories = await categoryBusiness.GetCategories(id: null);
+        return Ok(categories);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<Category> GetByAsync(int id)
-        {
-            return await categoryBusiness.GetCategory(id);
-        }
+    // GET api/CategoryApiController/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Category>> Get(int id)
+    {
+        var categories = await categoryBusiness.GetCategories(id);
+        var category = categories.FirstOrDefault();
+        if (category == null)
+            return NotFound();
+        return Ok(category);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateAsync(Category category)
-        {
-            bool result = await categoryBusiness.SaveCategoryAsync(category);
-            if (!result)
-                return BadRequest("Category not inserted");
+    // POST api/CategoryApiController
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post([FromBody] Category category)
+    {
+        var result = await categoryBusiness.SaveCategoryAsync(category);
+        if (result)
+            return CreatedAtAction(nameof(Get), new { id = category.CategoryId }, category);
+        return BadRequest();
+    }
 
-            return Ok($"Category #{category.CategoryId} created");
-        }
+    // PUT api/CategoryApiController/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult<bool>> Put(int id, [FromBody] Category category)
+    {
+        if (id != category.CategoryId)
+            return BadRequest();
+        
+        var result = await categoryBusiness.SaveCategoryAsync(category);
+        if (result)
+            return Ok(result);
+        return NotFound();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, Category category)
-        {
-            if (id != category.CategoryId)
-                return BadRequest("Category not inserted");
-
-            bool result = await categoryBusiness.UpdateCategoryAsync(category);
-
-            if (!result)
-                return BadRequest("Category not inserted");
-
-            return Ok($"Category #{category.CategoryId} updated");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            bool result = await categoryBusiness.DeleteCategoryAsync(id);
-
-            if (!result)
-                return BadRequest("Category not deleted");
-
-            return Ok($"Category #{id} deleted");
-        }
+    // DELETE api/CategoryApiController/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        var result = await categoryBusiness.DeleteCategoryAsync(id);
+        if (result)
+            return Ok(result);
+        return NotFound();
     }
 }
+

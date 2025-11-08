@@ -1,84 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface INotificationBusiness
 {
-    public interface INotificationBusiness
+    /// <summary>
+    /// Deletes the notification associated with the notification id.
+    /// </summary>
+    /// <param name="id">The notification id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteNotificationAsync(int id);
+
+    /// <summary>
+    /// Gets notifications. If id is provided, returns only that notification; otherwise returns all notifications.
+    /// </summary>
+    /// <param name="id">Optional notification id.</param>
+    /// <returns>A collection of notifications.</returns>
+    Task<IEnumerable<Notification>> GetNotifications(int? id);
+
+    /// <summary>
+    /// Saves a notification (creates or updates).
+    /// </summary>
+    /// <param name="notification">The notification to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveNotificationAsync(Notification notification);
+}
+
+public class NotificationBusiness(IRepositoryNotification repositoryNotification) : INotificationBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveNotificationAsync(Notification notification)
     {
-        /// <summary>
-        /// Saves the notification item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="inventory"></param>
-        /// <returns></returns>
-        Task<bool> SaveNotificationAsync(Notification notification);
-
-        /// <summary>
-        /// Update the notification
-        /// </summary>
-        /// <param name="notification"></param>
-        /// <returns></returns>
-        Task<bool> UpdateNotificationAsync(Notification notification);
-
-
-        /// <summary>
-        /// Deletes the inventory item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteNotificationAsync(int id);
-
-        /// <summary>
-        /// Get all notifications.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<Notification>> GetNotifications();
-
-        /// <summary>
-        /// Gets the notification item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Notification> GetNotification(int id);
+        return await repositoryNotification.UpdateAsync(notification);
     }
 
-    public class NotificationBusiness(IRepositoryNotification repoNotification) : INotificationBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteNotificationAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveNotificationAsync(Notification notification)
-        {
-            //Business logic here
-            return await repoNotification.UpsertAsync(notification, false);
-        }
+        var notification = await repositoryNotification.FindAsync(id);
+        if (notification == null) return false;
+        return await repositoryNotification.DeleteAsync(notification);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateNotificationAsync(Notification notification)
-        {
-            //Business logic here
-            return await repoNotification.UpsertAsync(notification, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteNotificationAsync(int id)
-        {
-            //Business logic here
-            var notification = await repoNotification.FindAsync(id);
-            return await repoNotification.DeleteAsync(notification);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<Notification>> GetNotifications()
-        {
-            //Business logic here
-            return await repoNotification.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<Notification> GetNotification(int id)
-        {
-            //Business logic here
-            return await repoNotification.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<Notification>> GetNotifications(int? id)
+    {
+        return id == null
+            ? await repositoryNotification.ReadAsync()
+            : [await repositoryNotification.FindAsync((int)id)];
     }
 }
 

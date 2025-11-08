@@ -1,11 +1,12 @@
 ﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PAW3.Models.DTO;
 
 namespace PAW3.Core.BusinessLogic;
 
@@ -18,34 +19,13 @@ public interface IProductBusiness
     /// <returns></returns>
     Task<bool> DeleteProductAsync(int id);
     /// <summary>
-    /// Gets the product associated with the product id.
+    /// 
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<Product> GetProduct(int id);
-
+    Task<ProductDTO> GetProducts(int? id);
     /// <summary>
-    /// Update the product
-    /// </summary>
-    /// <param name="product"></param>
-    /// <returns></returns>
-    Task<bool> UpdateProductAsync(Product product);
-
-    /// <summary>
-    /// Get all products.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    Task<IEnumerable<Product>> GetProducts();
-
-    /// <summary>
-    /// Gets all products that are in inventory (InventoryId =! NULL).
-    /// </summary>
-    /// <returns></returns>
-    Task<IEnumerable<Product>> GetProductsInInventory();
-
-    /// <summary>
-    /// Gets the product item with the specified identifier.
+    /// 
     /// </summary>
     /// <param name="product"></param>
     /// <returns></returns>
@@ -57,15 +37,9 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     /// </inheritdoc>
     public async Task<bool> SaveProductAsync(Product product)
     {
-        //Business logic here
-        return await repositoryProduct.UpsertAsync(product, false);
-    }
-
-    /// </inheritdoc>
-    public async Task<bool> UpdateProductAsync(Product product)
-    {
-        //Business logic here
-        return await repositoryProduct.UpsertAsync(product, true);
+        // que tengan mas de 5 quantity
+        // sabado o domingo solo puedo salvar de 8 a 12
+        return await repositoryProduct.UpdateAsync(product);
     }
 
     /// </inheritdoc>
@@ -76,24 +50,50 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
     }
 
     /// </inheritdoc>
-    public async Task<IEnumerable<Product>> GetProducts()
+    public async Task<ProductDTO> GetProducts(int? id)
     {
-        return await repositoryProduct.ReadAsync();
-    }
+        var hasId = id.HasValue;
+        var productDto = new ProductDTO();
 
-    /// </inheritdoc>
-    public async Task<IEnumerable<Product>> GetProductsInInventory()
-    {
-        var products = await repositoryProduct.ReadAsync();
+        var products = !hasId
+            ? await repositoryProduct.ReadAsync()
+            : [await repositoryProduct.FindAsync((int)id)];
 
-        return products = products.Where(p => p.InventoryId != null);
-    }
+        if (!hasId && products != null && products.Any())
+        {
+            productDto.Summaries.AddRange(products.Select(x => new
+            {
+                Id = x.ProductId,
+                Name = x.ProductName,
+                x.Rating
+            })
+            .GroupBy(y => y.Rating)
+            .SelectMany(g => g.Select(sub => new ProductSummary
+            {
+                Id = sub.Id,
+                Name = sub.Name,
+                Rating = sub.Rating,
+                Count = g.Count()
+            })).OrderByDescending(x => x.Count));
 
-    /// </inheritdoc
-    public async Task<Product> GetProduct(int id)
-    {
-        //Business logic here
-        return await repositoryProduct.FindAsync(id);
+            // Big Operation N^2 example
+
+            /*foreach (var item in items)
+            {
+                foreach (var subItem in item)
+                {
+                    productDto.Summaries.Add(new ProductSummary()
+                    {
+                        Id = item.Key,
+                        Name = subItem.Name,
+                        Rating = subItem.Rating
+                    });
+                }
+            }*/
+        }
+
+        productDto.Products = products;
+        return productDto;
     }
 }
 

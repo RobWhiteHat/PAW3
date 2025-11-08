@@ -1,82 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface IUserBusiness
 {
-    public interface IUserBusiness
+    /// <summary>
+    /// Deletes the user associated with the user id.
+    /// </summary>
+    /// <param name="id">The user id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteUserAsync(int id);
+
+    /// <summary>
+    /// Gets users. If id is provided, returns only that user; otherwise returns all users.
+    /// </summary>
+    /// <param name="id">Optional user id.</param>
+    /// <returns>A collection of users.</returns>
+    Task<IEnumerable<User>> GetUsers(int? id);
+
+    /// <summary>
+    /// Saves a user (creates or updates).
+    /// </summary>
+    /// <param name="user">The user to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveUserAsync(User user);
+}
+
+public class UserBusiness(IRepositoryUser repositoryUser) : IUserBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveUserAsync(User user)
     {
-        /// <summary>
-        /// Saves the user item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task<bool> SaveUserAsync(User user);
-
-        /// <summary>
-        /// Update the user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task<bool> UpdateUserAsync(User user);
-
-        /// <summary>
-        /// Deletes the user item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteUserAsync(int id);
-
-        /// <summary>
-        /// Gets the user items. If an ID is provided, retrieves the specific user item; otherwise, retrieves all user items.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<User>> GetUsers();
-
-        /// <summary>
-        /// Gets the user item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<User> GetUser(int id);
+        return await repositoryUser.UpdateAsync(user);
     }
 
-    public class UserBusiness(IRepositoryUser repoUser) : IUserBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteUserAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveUserAsync(User user)
-        {
-            //Business logic here
-            return await repoUser.UpsertAsync(user, false);
-        }
+        var user = await repositoryUser.FindAsync(id);
+        if (user == null) return false;
+        return await repositoryUser.DeleteAsync(user);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateUserAsync(User user)
-        {
-            //Business logic here
-            return await repoUser.UpsertAsync(user, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteUserAsync(int id)
-        {
-            //Business logic here
-            var user = await repoUser.FindAsync(id);
-            return await repoUser.DeleteAsync(user);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<User>> GetUsers()
-        {
-            //Business logic here
-            return await repoUser.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<User> GetUser(int id)
-        {
-            //Business logic here
-            return await repoUser.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<User>> GetUsers(int? id)
+    {
+        return id == null
+            ? await repositoryUser.ReadAsync()
+            : [await repositoryUser.FindAsync((int)id)];
     }
 }
+

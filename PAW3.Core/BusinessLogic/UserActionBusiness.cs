@@ -1,82 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface IUserActionBusiness
 {
-    public interface IUserActionBusiness
+    /// <summary>
+    /// Deletes the user action associated with the user action id.
+    /// </summary>
+    /// <param name="id">The user action id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteUserActionAsync(int id);
+
+    /// <summary>
+    /// Gets user actions. If id is provided, returns only that user action; otherwise returns all user actions.
+    /// </summary>
+    /// <param name="id">Optional user action id.</param>
+    /// <returns>A collection of user actions.</returns>
+    Task<IEnumerable<UserAction>> GetUserActions(int? id);
+
+    /// <summary>
+    /// Saves a user action (creates or updates).
+    /// </summary>
+    /// <param name="userAction">The user action to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveUserActionAsync(UserAction userAction);
+}
+
+public class UserActionBusiness(IRepositoryUserAction repositoryUserAction) : IUserActionBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveUserActionAsync(UserAction userAction)
     {
-        /// <summary>
-        /// Saves the user action item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="userAction"></param>
-        /// <returns></returns>
-        Task<bool> SaveUserActionAsync(UserAction userAction);
-
-        /// <summary>
-        /// Update the user action
-        /// </summary>
-        /// <param name="userAction"></param>
-        /// <returns></returns>
-        Task<bool> UpdateUserActionAsync(UserAction userAction);
-
-        /// <summary>
-        /// Deletes the user action item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteUserActionAsync(int id);
-
-        /// <summary>
-        /// Gets the user action items. If an ID is provided, retrieves the specific user action item; otherwise, retrieves all userAction items.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<UserAction>> GetUserActions();
-
-        /// <summary>
-        /// Gets the user action item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<UserAction> GetUserAction(int id);
+        return await repositoryUserAction.UpdateAsync(userAction);
     }
 
-    public class UserActionBusiness(IRepositoryUserAction repoUserAction) : IUserActionBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteUserActionAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveUserActionAsync(UserAction userAction)
-        {
-            //Business logic here
-            return await repoUserAction.UpsertAsync(userAction, false);
-        }
+        var userAction = await repositoryUserAction.FindAsync(id);
+        if (userAction == null) return false;
+        return await repositoryUserAction.DeleteAsync(userAction);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateUserActionAsync(UserAction userAction)
-        {
-            //Business logic here
-            return await repoUserAction.UpsertAsync(userAction, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteUserActionAsync(int id)
-        {
-            //Business logic here
-            var userAction = await repoUserAction.FindAsync(id);
-            return await repoUserAction.DeleteAsync(userAction);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<UserAction>> GetUserActions()
-        {
-            //Business logic here
-            return await repoUserAction.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<UserAction> GetUserAction(int id)
-        {
-            //Business logic here
-            return await repoUserAction.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<UserAction>> GetUserActions(int? id)
+    {
+        return id == null
+            ? await repositoryUserAction.ReadAsync()
+            : [await repositoryUserAction.FindAsync((int)id)];
     }
 }
+

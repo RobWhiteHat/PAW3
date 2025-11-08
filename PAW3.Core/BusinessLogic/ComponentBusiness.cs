@@ -1,89 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface IComponentBusiness
 {
-    public interface IComponentBusiness
+    /// <summary>
+    /// Deletes the component associated with the component id.
+    /// </summary>
+    /// <param name="id">The component id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteComponentAsync(int id);
+
+    /// <summary>
+    /// Gets components. If id is provided, returns only that component; otherwise returns all components.
+    /// </summary>
+    /// <param name="id">Optional component id.</param>
+    /// <returns>A collection of components.</returns>
+    Task<IEnumerable<Component>> GetComponents(int? id);
+
+    /// <summary>
+    /// Saves a component (creates or updates).
+    /// </summary>
+    /// <param name="component">The component to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveComponentAsync(Component component);
+}
+
+public class ComponentBusiness(IRepositoryComponent repositoryComponent) : IComponentBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveComponentAsync(Component component)
     {
-        /// <summary>
-        /// Saves the component item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <returns></returns>
-        Task<bool> SaveComponentAsync(Component component);
-
-        /// <summary>
-        /// Update the component
-        /// </summary>
-        /// <param name="component"></param>
-        /// <returns></returns>
-        Task<bool> UpdateComponentAsync(Component component);
-
-        /// <summary>
-        /// Deletes the component item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteComponentAsync(int id);
-
-        /// <summary>
-        /// Get all categories.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<Component>> GetComponents();
-
-        /// <summary>
-        /// Gets the component item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Component> GetComponent(int id);
-        
+        return await repositoryComponent.UpdateAsync(component);
     }
 
-    public class ComponentBusiness(IRepositoryComponent repoComponent) : IComponentBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteComponentAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveComponentAsync(Component component)
-        {
-            //Business logic here
-            return await repoComponent.UpsertAsync(component, false);
-        }
+        var component = await repositoryComponent.FindAsync(id);
+        if (component == null) return false;
+        return await repositoryComponent.DeleteAsync(component);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateComponentAsync(Component component)
-        {
-            //Business logic here
-            return await repoComponent.UpsertAsync(component, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteComponentAsync(int id)
-        {
-            //Business logic here
-            var component = await repoComponent.FindAsync(id);
-            return await repoComponent.DeleteAsync(component);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<Component>> GetComponents()
-        {
-            //Business logic here
-            return await repoComponent.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<Component> GetComponent(int id)
-        {
-            //Business logic here
-            return await repoComponent.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<Component>> GetComponents(int? id)
+    {
+        return id == null
+            ? await repositoryComponent.ReadAsync()
+            : [await repositoryComponent.FindAsync((int)id)];
     }
 }
 

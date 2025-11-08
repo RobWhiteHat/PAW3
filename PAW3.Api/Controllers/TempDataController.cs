@@ -16,7 +16,6 @@ namespace PAW3.Api.Controllers
             return TempData.GetData();
         }
 
-        /*
         // GET api/<TempDataController>/5
         [HttpGet("{id}")]
         public string Get(int id)
@@ -41,6 +40,5 @@ namespace PAW3.Api.Controllers
         public void Delete(int id)
         {
         }
-        */
     }
 }

@@ -7,15 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Azure\**" />
-    <Compile Remove="Mongodb\**" />
-    <Compile Remove="MSSQL\**" />
-    <EmbeddedResource Remove="Azure\**" />
-    <EmbeddedResource Remove="Mongodb\**" />
-    <EmbeddedResource Remove="MSSQL\**" />
-    <None Remove="Azure\**" />
-    <None Remove="Mongodb\**" />
-    <None Remove="MSSQL\**" />
+    <Folder Include="MSSQL\" />
+    <Folder Include="Mongodb\" />
+    <Folder Include="Azure\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +22,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PAW3.Models\PAW3.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,82 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface IUserRoleBusiness
 {
-    public interface IUserRoleBusiness
+    /// <summary>
+    /// Deletes the user role associated with the user role id.
+    /// </summary>
+    /// <param name="id">The user role id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteUserRoleAsync(int id);
+
+    /// <summary>
+    /// Gets user roles. If id is provided, returns only that user role; otherwise returns all user roles.
+    /// </summary>
+    /// <param name="id">Optional user role id.</param>
+    /// <returns>A collection of user roles.</returns>
+    Task<IEnumerable<UserRole>> GetUserRoles(int? id);
+
+    /// <summary>
+    /// Saves a user role (creates or updates).
+    /// </summary>
+    /// <param name="userRole">The user role to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveUserRoleAsync(UserRole userRole);
+}
+
+public class UserRoleBusiness(IRepositoryUserRole repositoryUserRole) : IUserRoleBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveUserRoleAsync(UserRole userRole)
     {
-        /// <summary>
-        /// Saves the use role item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="userRole"></param>
-        /// <returns></returns>
-        Task<bool> SaveUserRoleAsync(UserRole userRole);
-
-        /// <summary>
-        /// Update the use role
-        /// </summary>
-        /// <param name="userRole"></param>
-        /// <returns></returns>
-        Task<bool> UpdateUserRoleAsync(UserRole userRole);
-
-        /// <summary>
-        /// Deletes the use role item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteUserRoleAsync(int id);
-
-        /// <summary>
-        /// Gets the use role items. If an ID is provided, retrieves the specific userRole item; otherwise, retrieves all userRole items.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<UserRole>> GetUserRoles();
-
-        /// <summary>
-        /// Gets the use role item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<UserRole> GetUserRole(int id);
+        return await repositoryUserRole.UpdateAsync(userRole);
     }
 
-    public class UserRoleBusiness(IRepositoryUserRole repoUserRole) : IUserRoleBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteUserRoleAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveUserRoleAsync(UserRole userRole)
-        {
-            //Business logic here
-            return await repoUserRole.UpsertAsync(userRole, false);
-        }
+        var userRole = await repositoryUserRole.FindAsync(id);
+        if (userRole == null) return false;
+        return await repositoryUserRole.DeleteAsync(userRole);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateUserRoleAsync(UserRole userRole)
-        {
-            //Business logic here
-            return await repoUserRole.UpsertAsync(userRole, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteUserRoleAsync(int id)
-        {
-            //Business logic here
-            var userRole = await repoUserRole.FindAsync(id);
-            return await repoUserRole.DeleteAsync(userRole);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<UserRole>> GetUserRoles()
-        {
-            //Business logic here
-            return await repoUserRole.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<UserRole> GetUserRole(int id)
-        {
-            //Business logic here
-            return await repoUserRole.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<UserRole>> GetUserRoles(int? id)
+    {
+        return id == null
+            ? await repositoryUserRole.ReadAsync()
+            : [await repositoryUserRole.FindAsync((int)id)];
     }
 }
+

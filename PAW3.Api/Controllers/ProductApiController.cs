@@ -1,62 +1,63 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
-using PAW3.Data.Models;
+using PAW3.Models.DTO;
+using PAW3.Models.Entities;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace PAW3.Api.Controllers;
 
-namespace PAW3.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class ProductApiController(IProductBusiness productBusiness) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductApiController(IProductBusiness productBusiness) : ControllerBase
+    // GET: api/ProductApi
+    [HttpGet]
+    public async Task<ActionResult<ProductDTO>> Get()
     {
-        // GET: api/<ProductApiController>
-        [HttpGet]
-        public async Task<IEnumerable<Product>> GetAsync()
-        {
-            return await productBusiness.GetProducts();
-        }
+        var products = await productBusiness.GetProducts(id: null);
+        return Ok(products);
+    }
 
-        // GET api/<ProductApiController>/5
-        [HttpGet("{id}")]
-        public async Task<Product> GetAsync(int id)
-        {
-            return await productBusiness.GetProduct(id);
-        }
+    // GET api/ProductApiController/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductDTO>> Get(int id)
+    {
+        var products = await productBusiness.GetProducts(id);
+        var product = products.Products.FirstOrDefault();
+        if (product == null)
+            return NotFound();
+        return Ok(product);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateAsync(Product product)
-        {
-            bool result = await productBusiness.SaveProductAsync(product);
-            if (!result)
-                return BadRequest("Product not inserted");
+    // POST api/ProductApiController
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post([FromBody] Product product)
+    {
+        var result = await productBusiness.SaveProductAsync(product);
+        if (result)
+            return CreatedAtAction(nameof(Get), new { id = product.ProductId }, product);
+        return BadRequest();
+    }
 
-            return Ok($"Product #{product.ProductId} created");
-        }
+    // PUT api/ProductApiController/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult<bool>> Put(int id, [FromBody] Product product)
+    {
+        if (id != product.ProductId)
+            return BadRequest();
+        
+        var result = await productBusiness.SaveProductAsync(product);
+        if (result)
+            return Ok(result);
+        return NotFound();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, Product product)
-        {
-            if (id != product.ProductId)
-                return BadRequest("Product not inserted");
-
-            bool result = await productBusiness.UpdateProductAsync(product);
-
-            if (!result)
-                return BadRequest("Product not inserted");
-
-            return Ok($"Product #{product.ProductId} updated");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            bool result = await productBusiness.DeleteProductAsync(id);
-
-            if (!result)
-                return BadRequest("Product not deleted");
-
-            return Ok($"Product #{id} deleted");
-        }
+    // DELETE api/ProductApiController/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        var result = await productBusiness.DeleteProductAsync(id);
+        if (result)
+            return Ok(result);
+        return NotFound();
     }
 }

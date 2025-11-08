@@ -1,82 +1,55 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
+using ModelsTask = PAW3.Models.Entities.Task;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface ITaskBusiness
 {
-    public interface ITaskBusiness
+    /// <summary>
+    /// Deletes the task associated with the task id.
+    /// </summary>
+    /// <param name="id">The task id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteTaskAsync(int id);
+
+    /// <summary>
+    /// Gets tasks. If id is provided, returns only that task; otherwise returns all tasks.
+    /// </summary>
+    /// <param name="id">Optional task id.</param>
+    /// <returns>A collection of tasks.</returns>
+    Task<IEnumerable<ModelsTask>> GetTasks(int? id);
+
+    /// <summary>
+    /// Saves a task (creates or updates).
+    /// </summary>
+    /// <param name="task">The task to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveTaskAsync(ModelsTask task);
+}
+
+public class TaskBusiness(IRepositoryTask repositoryTask) : ITaskBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveTaskAsync(ModelsTask task)
     {
-        /// <summary>
-        /// Saves the task item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="task"></param>
-        /// <returns></returns>
-        Task<bool> SaveTaskAsync(Data.Models.Task task);
-
-        /// <summary>
-        /// Update the task
-        /// </summary>
-        /// <param name="task"></param>
-        /// <returns></returns>
-        Task<bool> UpdateTaskAsync(Data.Models.Task task);
-
-        /// <summary>
-        /// Deletes the task item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteTaskAsync(int id);
-
-        /// <summary>
-        /// Gets the task items. If an ID is provided, retrieves the specific task item; otherwise, retrieves all task items.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<Data.Models.Task>> GetTasks();
-
-        /// <summary>
-        /// Gets the task item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Data.Models.Task> GetTask(int id);
+        return await repositoryTask.UpdateAsync(task);
     }
 
-    public class TaskBusiness(IRepositoryTask repoTask) : ITaskBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteTaskAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveTaskAsync(Data.Models.Task task)
-        {
-            //Business logic here
-            return await repoTask.UpsertAsync(task, false);
-        }
+        var task = await repositoryTask.FindAsync(id);
+        if (task == null) return false;
+        return await repositoryTask.DeleteAsync(task);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateTaskAsync(Data.Models.Task task)
-        {
-            //Business logic here
-            return await repoTask.UpsertAsync(task, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteTaskAsync(int id)
-        {
-            //Business logic here
-            var task = await repoTask.FindAsync(id);
-            return await repoTask.DeleteAsync(task);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<Data.Models.Task>> GetTasks()
-        {
-            //Business logic here
-            return await repoTask.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<Data.Models.Task> GetTask(int id)
-        {
-            //Business logic here
-            return await repoTask.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<ModelsTask>> GetTasks(int? id)
+    {
+        return id == null
+            ? await repositoryTask.ReadAsync()
+            : [await repositoryTask.FindAsync((int)id)];
     }
 }
+

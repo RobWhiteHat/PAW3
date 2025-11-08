@@ -1,63 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
-using PAW3.Data.Models;
+using PAW3.Models.Entities;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace PAW3.Api.Controllers;
 
-namespace PAW3.Api.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class RoleApiController(IRoleBusiness roleBusiness) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RoleApiController(IRoleBusiness roleBusiness) : ControllerBase
+    // GET: api/RoleApiController
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Role>>> Get()
     {
-        // GET: api/<RoleApiController>
-        [HttpGet]
-        public async Task<IEnumerable<Role>> GetAsync()
-        {
-            return await roleBusiness.GetRoles();
-        }
+        var roles = await roleBusiness.GetRoles(id: null);
+        return Ok(roles);
+    }
 
-        // GET api/<RoleApiController>/5
-        [HttpGet("{id}")]
-        public async Task<Role> GetAsync(int id)
-        {
-            return await roleBusiness.GetRole(id);
-        }
+    // GET api/RoleApiController/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Role>> Get(int id)
+    {
+        var roles = await roleBusiness.GetRoles(id);
+        var role = roles.FirstOrDefault();
+        if (role == null)
+            return NotFound();
+        return Ok(role);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateAsync(Role role)
-        {
-            bool result = await roleBusiness.SaveRoleAsync(role);
-            if (!result)
-                return BadRequest("Role not inserted");
+    // POST api/RoleApiController
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post([FromBody] Role role)
+    {
+        var result = await roleBusiness.SaveRoleAsync(role);
+        if (result)
+            return CreatedAtAction(nameof(Get), new { id = role.RoleId }, role);
+        return BadRequest();
+    }
 
-            return Ok($"Role #{role.RoleId} created");
-        }
+    // PUT api/RoleApiController/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult<bool>> Put(int id, [FromBody] Role role)
+    {
+        if (id != role.RoleId)
+            return BadRequest();
+        
+        var result = await roleBusiness.SaveRoleAsync(role);
+        if (result)
+            return Ok(result);
+        return NotFound();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, Role role)
-        {
-            if (id != role.RoleId)
-                return BadRequest("Role not inserted");
-
-            bool result = await roleBusiness.UpdateRoleAsync(role);
-
-            if (!result)
-                return BadRequest("Role not inserted");
-
-            return Ok($"Role #{role.RoleId} updated");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            bool result = await roleBusiness.DeleteRoleAsync(id);
-
-            if (!result)
-                return BadRequest("Role not deleted");
-
-            return Ok($"Role #{id} deleted");
-        }
-
+    // DELETE api/RoleApiController/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        var result = await roleBusiness.DeleteRoleAsync(id);
+        if (result)
+            return Ok(result);
+        return NotFound();
     }
 }
+

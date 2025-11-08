@@ -1,83 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface IRoleBusiness
 {
-    public interface IRoleBusiness
+    /// <summary>
+    /// Deletes the role associated with the role id.
+    /// </summary>
+    /// <param name="id">The role id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteRoleAsync(int id);
+
+    /// <summary>
+    /// Gets roles. If id is provided, returns only that role; otherwise returns all roles.
+    /// </summary>
+    /// <param name="id">Optional role id.</param>
+    /// <returns>A collection of roles.</returns>
+    Task<IEnumerable<Role>> GetRoles(int? id);
+
+    /// <summary>
+    /// Saves a role (creates or updates).
+    /// </summary>
+    /// <param name="role">The role to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveRoleAsync(Role role);
+}
+
+public class RoleBusiness(IRepositoryRole repositoryRole) : IRoleBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveRoleAsync(Role role)
     {
-        /// <summary>
-        /// Saves the role item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="inventory"></param>
-        /// <returns></returns>
-        Task<bool> SaveRoleAsync(Role role);
-
-        /// <summary>
-        /// Update the role
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        Task<bool> UpdateRoleAsync(Role role);
-
-        /// <summary>
-        /// Deletes the inventory item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteRoleAsync(int id);
-
-        /// <summary>
-        /// Get all roles.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<Role>> GetRoles();
-
-        /// <summary>
-        /// Gets the role item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Role> GetRole(int id);
+        return await repositoryRole.UpdateAsync(role);
     }
 
-    public class RoleBusiness(IRepositoryRole repoRole) : IRoleBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteRoleAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveRoleAsync(Role role)
-        {
-            //Business logic here
-            return await repoRole.UpsertAsync(role, false);
-        }
+        var role = await repositoryRole.FindAsync(id);
+        if (role == null) return false;
+        return await repositoryRole.DeleteAsync(role);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateRoleAsync(Role role)
-        {
-            //Business logic here
-            return await repoRole.UpsertAsync(role, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteRoleAsync(int id)
-        {
-            //Business logic here
-            var role = await repoRole.FindAsync(id);
-            return await repoRole.DeleteAsync(role);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<Role>> GetRoles()
-        {
-            //Business logic here
-            return await repoRole.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<Role> GetRole(int id)
-        {
-            //Business logic here
-            return await repoRole.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<Role>> GetRoles(int? id)
+    {
+        return id == null
+            ? await repositoryRole.ReadAsync()
+            : [await repositoryRole.FindAsync((int)id)];
     }
 }
 

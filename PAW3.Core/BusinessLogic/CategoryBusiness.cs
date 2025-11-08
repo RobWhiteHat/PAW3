@@ -1,89 +1,54 @@
-﻿using PAW3.Data.Models;
+using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PAW3.Core.BusinessLogic
+namespace PAW3.Core.BusinessLogic;
+
+public interface ICategoryBusiness
 {
-    public interface ICategoryBusiness
+    /// <summary>
+    /// Deletes the category associated with the category id.
+    /// </summary>
+    /// <param name="id">The category id.</param>
+    /// <returns>True if deletion was successful, false otherwise.</returns>
+    Task<bool> DeleteCategoryAsync(int id);
+
+    /// <summary>
+    /// Gets categories. If id is provided, returns only that category; otherwise returns all categories.
+    /// </summary>
+    /// <param name="id">Optional category id.</param>
+    /// <returns>A collection of categories.</returns>
+    Task<IEnumerable<Category>> GetCategories(int? id);
+
+    /// <summary>
+    /// Saves a category (creates or updates).
+    /// </summary>
+    /// <param name="category">The category to save.</param>
+    /// <returns>True if save was successful, false otherwise.</returns>
+    Task<bool> SaveCategoryAsync(Category category);
+}
+
+public class CategoryBusiness(IRepositoryCategory repositoryCategory) : ICategoryBusiness
+{
+    /// <inheritdoc />
+    public async Task<bool> SaveCategoryAsync(Category category)
     {
-        /// <summary>
-        /// Saves the category item. If the item already exists, it updates it; otherwise, it creates a new item.
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
-        Task<bool> SaveCategoryAsync(Category category);
-
-        /// <summary>
-        /// Update the category
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
-        Task<bool> UpdateCategoryAsync(Category category);
-
-        /// <summary>
-        /// Deletes the category item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<bool> DeleteCategoryAsync(int id);
-
-        /// <summary>
-        /// Get all categories.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IEnumerable<Category>> GetCategories();
-
-        /// <summary>
-        /// Gets the category item with the specified identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Category> GetCategory(int id);
-        
+        return await repositoryCategory.UpdateAsync(category);
     }
 
-    public class CategoryBusiness(IRepositoryCategory repoCategory) : ICategoryBusiness
+    /// <inheritdoc />
+    public async Task<bool> DeleteCategoryAsync(int id)
     {
-        /// </inheritdoc>
-        public async Task<bool> SaveCategoryAsync(Category category)
-        {
-            //Business logic here
-            return await repoCategory.UpsertAsync(category, false);
-        }
+        var category = await repositoryCategory.FindAsync(id);
+        if (category == null) return false;
+        return await repositoryCategory.DeleteAsync(category);
+    }
 
-        /// </inheritdoc>
-        public async Task<bool> UpdateCategoryAsync(Category category)
-        {
-            //Business logic here
-            return await repoCategory.UpsertAsync(category, true);
-        }
-
-        /// </inheritdoc>
-        public async Task<bool> DeleteCategoryAsync(int id)
-        {
-            //Business logic here
-            var category = await repoCategory.FindAsync(id);
-            return await repoCategory.DeleteAsync(category);
-        }
-
-        /// </inheritdoc>
-        public async Task<IEnumerable<Category>> GetCategories()
-        {
-            //Business logic here
-            return await repoCategory.ReadAsync();
-        }
-
-        /// </inheritdoc
-        public async Task<Category> GetCategory(int id)
-        {
-            //Business logic here
-            return await repoCategory.FindAsync(id);
-        }
+    /// <inheritdoc />
+    public async Task<IEnumerable<Category>> GetCategories(int? id)
+    {
+        return id == null
+            ? await repositoryCategory.ReadAsync()
+            : [await repositoryCategory.FindAsync((int)id)];
     }
 }
 
