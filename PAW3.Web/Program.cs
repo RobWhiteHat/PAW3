@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PAW3.Architecture;
+using PAW3.Core.Services;
 using PAW3.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("ProductDB") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -31,6 +32,7 @@ builder.Services.AddSession(options =>
 
 // Register IRestProvider
 builder.Services.AddScoped<IRestProvider, RestProvider>();
+builder.Services.AddTransient<IEntityOperationsService, EntityOperationsService>();
 
 var app = builder.Build();
 

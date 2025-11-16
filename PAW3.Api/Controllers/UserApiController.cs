@@ -11,6 +11,7 @@ public class UserApiController(IUserBusiness userBusiness) : ControllerBase
     // GET: api/UserApiController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> Get()
+    
     {
         var users = await userBusiness.GetUsers(id: null);
         return Ok(users);
