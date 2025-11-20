@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
+using PAW3.Models.DTO;
 using PAW3.Models.Entities;
 
 namespace PAW3.Api.Controllers;
@@ -10,7 +11,7 @@ public class InventoryApiController(IInventoryBusiness inventoryBusiness) : Cont
 {
     // GET: api/InventoryApiController
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Inventory>>> Get()
+    public async Task<ActionResult<InventoryDTO>> Get()
     {
         var inventories = await inventoryBusiness.GetInventories(id: null);
         return Ok(inventories);
@@ -18,10 +19,10 @@ public class InventoryApiController(IInventoryBusiness inventoryBusiness) : Cont
 
     // GET api/InventoryApiController/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Inventory>> Get(int id)
+    public async Task<ActionResult<InventoryDTO>> Get(int id)
     {
         var inventories = await inventoryBusiness.GetInventories(id);
-        var inventory = inventories.FirstOrDefault();
+        var inventory = inventories.Inventories.FirstOrDefault();
         if (inventory == null)
             return NotFound();
         return Ok(inventory);

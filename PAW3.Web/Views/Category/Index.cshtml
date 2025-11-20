@@ -1,5 +1,6 @@
-@model IEnumerable<CategoryViewModel>
-
+@using PAW3.Core.Services
+@model CategoryDtoViewModel
+@inject IEntityOperationsService entityService
 @{
     ViewData["Title"] = "Categories";
 }
@@ -19,20 +20,20 @@
         </div>
     }
 
-    @if (Model != null && Model.Any())
+    @if (Model != null && Model.Categories.Any())
     {
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.CategoryId)</th>
-                        <th>@Html.DisplayNameFor(model => model.CategoryName)</th>
-                        <th>@Html.DisplayNameFor(model => model.Description)</th>
+                        <th>@Html.DisplayNameFor(model => model.Categories.FirstOrDefault().CategoryId)</th>
+                        <th>@Html.DisplayNameFor(model => model.Categories.FirstOrDefault().CategoryName)</th>
+                        <th>@Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Description)</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Categories)
                     {
                         <tr>
                             <td><strong>@Html.DisplayFor(modelItem => item.CategoryId)</strong></td>
@@ -72,3 +73,8 @@
     }
 </div>
 
+@{
+    ViewData["Value"] = "N/A";
+    ViewData["SummaryTitle"] = "Category";
+    await Html.RenderPartialAsync("Partial/Summary", Model?.Summaries ?? []);
+}

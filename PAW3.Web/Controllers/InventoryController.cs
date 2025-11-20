@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Architecture;
 using PAW3.Architecture.Providers;
+using PAW3.Core.Services;
 using PAW3.Web.Filters;
 using PAW3.Web.Models.ViewModels;
 
@@ -12,11 +13,14 @@ public class InventoryController : Controller
     private readonly IRestProvider _restProvider;
     private readonly IConfiguration _configuration;
     private readonly string _apiBaseUrl;
+    private readonly IEntityOperationsService _entityService;
 
-    public InventoryController(IRestProvider restProvider, IConfiguration configuration)
+
+    public InventoryController(IRestProvider restProvider, IConfiguration configuration, IEntityOperationsService entityService)
     {
         _restProvider = restProvider;
         _configuration = configuration;
+        _entityService = entityService;
         _apiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7180/api";
     }
 
@@ -26,13 +30,13 @@ public class InventoryController : Controller
         {
             var endpoint = $"{_apiBaseUrl}/InventoryApi";
             var response = await _restProvider.GetAsync(endpoint, null);
-            var inventories = JsonProvider.DeserializeSimple<List<InventoryViewModel>>(response) ?? new List<InventoryViewModel>();
+            var inventories = JsonProvider.DeserializeSimple<InventoryDtoViewModel>(response);
             return View(inventories);
         }
         catch (Exception ex)
         {
             ViewBag.Error = $"Error loading inventories: {ex.Message}";
-            return View(new List<InventoryViewModel>());
+            return View(new InventoryDtoViewModel());
         }
     }
 

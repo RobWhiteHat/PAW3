@@ -86,6 +86,8 @@
 </div>
 
 @{
+    ViewData["Value"] = "Rating";
+    ViewData["SummaryTitle"] = "Product";
 	await Html.RenderPartialAsync("Partial/Summary", Model?.Summaries ?? []);
 }
 

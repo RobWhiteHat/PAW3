@@ -65,14 +65,14 @@ public class ProductBusiness(IRepositoryProduct repositoryProduct) : IProductBus
             {
                 Id = x.ProductId,
                 Name = x.ProductName,
-                x.Rating
+                Value = x.Rating
             })
-            .GroupBy(y => y.Rating)
-            .SelectMany(g => g.Select(sub => new ProductSummary
+            .GroupBy(y => y.Value)
+            .SelectMany(g => g.Select(sub => new Summary
             {
                 Id = sub.Id,
                 Name = sub.Name,
-                Rating = sub.Rating,
+                Value = sub.Value,
                 Count = g.Count()
             })).OrderByDescending(x => x.Count));
 

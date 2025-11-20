@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
+using PAW3.Models.DTO;
 using PAW3.Models.Entities;
 
 namespace PAW3.Api.Controllers;
@@ -10,7 +11,7 @@ public class CategoryApiController(ICategoryBusiness categoryBusiness) : Control
 {
     // GET: api/CategoryApiController
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> Get()
+    public async Task<ActionResult<CategoryDTO>> Get()
     {
         var categories = await categoryBusiness.GetCategories(id: null);
         return Ok(categories);
@@ -18,10 +19,10 @@ public class CategoryApiController(ICategoryBusiness categoryBusiness) : Control
 
     // GET api/CategoryApiController/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Category>> Get(int id)
+    public async Task<ActionResult<CategoryDTO>> Get(int id)
     {
         var categories = await categoryBusiness.GetCategories(id);
-        var category = categories.FirstOrDefault();
+        var category = categories.Categories.FirstOrDefault();
         if (category == null)
             return NotFound();
         return Ok(category);

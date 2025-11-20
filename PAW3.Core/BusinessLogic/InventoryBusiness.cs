@@ -1,5 +1,6 @@
 using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
+using PAW3.Models.DTO;
 
 namespace PAW3.Core.BusinessLogic;
 
@@ -17,7 +18,7 @@ public interface IInventoryBusiness
     /// </summary>
     /// <param name="id">Optional inventory id.</param>
     /// <returns>A collection of inventories.</returns>
-    Task<IEnumerable<Inventory>> GetInventories(int? id);
+    Task<InventoryDTO> GetInventories(int? id);
 
     /// <summary>
     /// Saves an inventory (creates or updates).
@@ -44,11 +45,35 @@ public class InventoryBusiness(IRepositoryInventory repositoryInventory) : IInve
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Inventory>> GetInventories(int? id)
+    public async Task<InventoryDTO> GetInventories(int? id)
     {
-        return id == null
+        var hasId = id.HasValue;
+        var inventoryDto = new InventoryDTO();
+
+        var inventories = !hasId
             ? await repositoryInventory.ReadAsync()
             : [await repositoryInventory.FindAsync((int)id)];
+
+        if (!hasId && inventories != null && inventories.Any())
+        {
+            inventoryDto.Summaries.AddRange(inventories.Select(x => new
+            {
+                Id = x.InventoryId,
+                x.UnitPrice,
+                x.UnitsInStock,
+                x.ProductId
+            })
+            .GroupBy(y => y.UnitPrice)
+            .SelectMany(g => g.Select(sub => new Summary
+            {
+                Id = sub.Id,
+                Name = sub.ProductId.ToString() ?? "",
+                Value = sub.UnitPrice,
+                Count = g.Count()
+            })).OrderByDescending(x => x.Count));
+        }
+        inventoryDto.Inventories = inventories;
+        return inventoryDto;
     }
 }
 

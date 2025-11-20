@@ -12,16 +12,18 @@ public class ProductController : Controller
 {
     private readonly IRestProvider _restProvider;
     private readonly IConfiguration _configuration;
+    private readonly IEntityOperationsService _entityService;
     private readonly string _apiBaseUrl;
 
-    public ProductController(IRestProvider restProvider, IConfiguration configuration)
+    public ProductController(IRestProvider restProvider, IConfiguration configuration, IEntityOperationsService entityService)
     {
         _restProvider = restProvider;
         _configuration = configuration;
+        _entityService = entityService;
         _apiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7180/api";
     }
 
-    public async Task<IActionResult> Index(IEntityOperationsService entityService)
+    public async Task<IActionResult> Index()
     {
         try
         {
@@ -32,7 +34,7 @@ public class ProductController : Controller
             {
                 productDto = new ProductDtoViewModel();
             }
-            entityService.SumEach(productDto.Products.Select(x => x.Rating ?? 0.0M).ToList(), 0.5M);
+            _entityService.SumEach(productDto.Products.Select(x => x.Rating ?? 0.0M).ToList(), 0.5M);
             return View(productDto);
         }
         catch (Exception ex)

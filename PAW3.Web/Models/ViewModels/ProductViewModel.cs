@@ -1,17 +1,11 @@
+using PAW3.Web.Models.Generics;
+
 namespace PAW3.Web.Models.ViewModels;
 
 public class ProductDtoViewModel
 {
     public IEnumerable<ProductViewModel> Products { get; set; } = [];
-    public List<ProductSummaryViewModel> Summaries { get; set; } = [];
-}
-
-public class ProductSummaryViewModel
-{
-    public decimal? Id { get; set; }
-    public string? Name { get; set; }
-    public decimal? Rating { get; set; }
-    public int Count { get; set; }
+    public List<Generics.SummaryViewModel> Summaries { get; set; } = [];
 }
 
 public class ProductViewModel

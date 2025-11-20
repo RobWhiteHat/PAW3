@@ -1,5 +1,6 @@
-using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
+using PAW3.Models.DTO;
+using PAW3.Models.Entities;
 
 namespace PAW3.Core.BusinessLogic;
 
@@ -17,7 +18,7 @@ public interface ICategoryBusiness
     /// </summary>
     /// <param name="id">Optional category id.</param>
     /// <returns>A collection of categories.</returns>
-    Task<IEnumerable<Category>> GetCategories(int? id);
+    Task<CategoryDTO> GetCategories(int? id);
 
     /// <summary>
     /// Saves a category (creates or updates).
@@ -44,11 +45,34 @@ public class CategoryBusiness(IRepositoryCategory repositoryCategory) : ICategor
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Category>> GetCategories(int? id)
+    public async Task<CategoryDTO> GetCategories(int? id)
     {
-        return id == null
+        var hasId = id.HasValue;
+        var categoryDto = new CategoryDTO();
+
+        var categories = !hasId
             ? await repositoryCategory.ReadAsync()
             : [await repositoryCategory.FindAsync((int)id)];
+
+        if (!hasId && categories != null && categories.Any())
+        {
+            categoryDto.Summaries.AddRange(categories.Select(x => new
+            {
+                Id = x.CategoryId,
+                Name = x.CategoryName,
+                Value = 0.00M,
+            })
+            .GroupBy(y => y.Name)
+            .SelectMany(g => g.Select(sub => new Summary
+            {
+                Id = sub.Id,
+                Name = sub.Name ?? "",
+                Value = 0.00M,
+                Count = g.Count()
+            })).OrderByDescending(x => x.Count));
+        }
+        categoryDto.Categories = categories;
+        return categoryDto;
     }
 }
 

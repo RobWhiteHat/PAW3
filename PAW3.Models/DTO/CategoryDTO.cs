@@ -2,9 +2,9 @@
 
 namespace PAW3.Models.DTO
 {
-    public class ProductDTO
+    public class CategoryDTO
     {
-        public IEnumerable<Product> Products { get; set; } = [];
+        public IEnumerable<Category> Categories { get; set; } = [];
 
         public List<Summary> Summaries { get; set; } = [];
     }

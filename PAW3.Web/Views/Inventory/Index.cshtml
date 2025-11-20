@@ -1,5 +1,6 @@
-@model IEnumerable<InventoryViewModel>
-
+@using PAW3.Core.Services
+@model InventoryDtoViewModel
+@inject IEntityOperationsService entityService
 @{
     ViewData["Title"] = "Inventory";
 }
@@ -19,21 +20,21 @@
         </div>
     }
 
-    @if (Model != null && Model.Any())
+    @if (Model != null && Model.Inventories.Any())
     {
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.InventoryId)</th>
-                        <th>@Html.DisplayNameFor(model => model.UnitsInStock)</th>
-                        <th>@Html.DisplayNameFor(model => model.UnitPrice)</th>
-                        <th>@Html.DisplayNameFor(model => model.ProductId)</th>
+                        <th>@Html.DisplayNameFor(model => model.Inventories.FirstOrDefault().InventoryId)</th>
+                        <th>@Html.DisplayNameFor(model => model.Inventories.FirstOrDefault().UnitsInStock)</th>
+                        <th>@Html.DisplayNameFor(model => model.Inventories.FirstOrDefault().UnitPrice)</th>
+                        <th>@Html.DisplayNameFor(model => model.Inventories.FirstOrDefault().ProductId)</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Inventories)
                     {
                         <tr>
                             <td><strong>@Html.DisplayFor(modelItem => item.InventoryId)</strong></td>
@@ -73,3 +74,10 @@
         </div>
     }
 </div>
+
+@{
+    ViewData["Value"] = "Unit Price";
+    ViewData["SummaryTitle"] = "Inventory";
+    await Html.RenderPartialAsync("Partial/Summary", Model?.Summaries ?? []);
+}
+

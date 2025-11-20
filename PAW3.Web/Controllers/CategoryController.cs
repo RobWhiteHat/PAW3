@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Architecture;
 using PAW3.Architecture.Providers;
+using PAW3.Core.Services;
+using PAW3.Models.DTO;
 using PAW3.Web.Filters;
 using PAW3.Web.Models.ViewModels;
 using System.Text.Json;
@@ -12,12 +14,14 @@ public class CategoryController : Controller
 {
     private readonly IRestProvider _restProvider;
     private readonly IConfiguration _configuration;
+    private readonly IEntityOperationsService _entityService;
     private readonly string _apiBaseUrl;
 
-    public CategoryController(IRestProvider restProvider, IConfiguration configuration)
+    public CategoryController(IRestProvider restProvider, IConfiguration configuration, IEntityOperationsService entityService)
     {
         _restProvider = restProvider;
         _configuration = configuration;
+        _entityService = entityService;
         _apiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7180/api";
     }
 
@@ -28,13 +32,13 @@ public class CategoryController : Controller
         {
             var endpoint = $"{_apiBaseUrl}/CategoryApi";
             var response = await _restProvider.GetAsync(endpoint, null);
-            var categories = JsonProvider.DeserializeSimple<List<CategoryViewModel>>(response) ?? new List<CategoryViewModel>();
-            return View(categories);
+            var categoryDto = JsonProvider.DeserializeSimple<CategoryDtoViewModel>(response);
+            return View(categoryDto);
         }
         catch (Exception ex)
         {
             ViewBag.Error = $"Error loading categories: {ex.Message}";
-            return View(new List<CategoryViewModel>());
+            return View(new List<CategoryDtoViewModel>());
         }
     }
 
@@ -45,7 +49,7 @@ public class CategoryController : Controller
         {
             var endpoint = $"{_apiBaseUrl}/CategoryApi/{id}";
             var response = await _restProvider.GetAsync(endpoint, id.ToString());
-            var category = JsonProvider.DeserializeSimple<CategoryViewModel>(response);
+            var category = JsonProvider.DeserializeSimple<CategoryDtoViewModel>(response);
             if (category == null)
                 return NotFound();
             return View(category);
@@ -66,7 +70,7 @@ public class CategoryController : Controller
     // POST: Category/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CategoryViewModel category)
+    public async Task<IActionResult> Create(CategoryDtoViewModel category)
     {
         try
         {
@@ -92,7 +96,7 @@ public class CategoryController : Controller
         {
             var endpoint = $"{_apiBaseUrl}/CategoryApi/{id}";
             var response = await _restProvider.GetAsync(endpoint, id.ToString());
-            var category = JsonProvider.DeserializeSimple<CategoryViewModel>(response);
+            var category = JsonProvider.DeserializeSimple<CategoryDtoViewModel>(response);
             if (category == null)
                 return NotFound();
             return View(category);

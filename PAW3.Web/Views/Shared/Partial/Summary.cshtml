@@ -1,4 +1,4 @@
-﻿@model List<PAW3.Web.Models.ViewModels.ProductSummaryViewModel>;
+﻿@model List<PAW3.Web.Models.Generics.SummaryViewModel>;
 
 @{
 	ViewData["Title"] = "Summary";
@@ -6,7 +6,7 @@
 
 <div class="summary-card">
 	<div class="summary-header">
-		<h2><i class="fas fa-chart-bar text-primary-custom me-2"></i>Product Summary</h2>
+		<h2><i class="fas fa-chart-bar text-primary-custom me-2"></i>@(ViewData["SummaryTitle"]) @(ViewData["Title"])</h2>
 	</div>
 	@if (Model != null)
 	{
@@ -14,9 +14,9 @@
 			@foreach (var summary in Model)
 			{
 				<tr>
-					<td><strong>Id:</strong></td><td>@summary.Id</td>
-					<td><strong>Name:</strong></td><td>@summary.Name</td>
-					<td><strong>Rating:</strong></td><td>@summary.Rating</td>
+					<td><strong>Id:</strong></td><td>@(summary.Id ?? 0.0M)</td>
+					<td><strong>Name:</strong></td><td>@(summary.Name ?? "")</td>
+					<td><strong>@(ViewData["Value"]):</strong></td><td>@(summary.Value ?? 0.0M)</td>
 					<td><strong>Count:</strong></td><td>@summary.Count</td>
 				</tr>
 			}			

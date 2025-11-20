@@ -1,4 +1,12 @@
+using PAW3.Web.Models.Generics;
+
 namespace PAW3.Web.Models.ViewModels;
+
+public class InventoryDtoViewModel
+{
+    public IEnumerable<InventoryViewModel> Inventories { get; set; } = [];
+    public List<SummaryViewModel> Summaries { get; set; } = [];
+}
 
 public class InventoryViewModel
 {
