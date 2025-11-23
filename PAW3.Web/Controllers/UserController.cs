@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Architecture;
 using PAW3.Architecture.Providers;
+using PAW3.Core.Services;
 using PAW3.Web.Filters;
 using PAW3.Web.Models.ViewModels;
 
@@ -11,12 +12,14 @@ public class UserController : Controller
 {
     private readonly IRestProvider _restProvider;
     private readonly IConfiguration _configuration;
+    private readonly IEntityOperationsService _entityService;
     private readonly string _apiBaseUrl;
 
-    public UserController(IRestProvider restProvider, IConfiguration configuration)
+    public UserController(IRestProvider restProvider, IConfiguration configuration, IEntityOperationsService entityService)
     {
         _restProvider = restProvider;
         _configuration = configuration;
+        _entityService = entityService;
         _apiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7180/api";
     }
 
@@ -26,13 +29,13 @@ public class UserController : Controller
         {
             var endpoint = $"{_apiBaseUrl}/UserApi";
             var response = await _restProvider.GetAsync(endpoint, null);
-            var users = JsonProvider.DeserializeSimple<List<UserViewModel>>(response) ?? new List<UserViewModel>();
-            return View(users);
+            var usersDto = JsonProvider.DeserializeSimple<UserDtoViewModel>(response);
+            return View(usersDto);
         }
         catch (Exception ex)
         {
             ViewBag.Error = $"Error loading users: {ex.Message}";
-            return View(new List<UserViewModel>());
+            return View(new UserDtoViewModel());
         }
     }
 

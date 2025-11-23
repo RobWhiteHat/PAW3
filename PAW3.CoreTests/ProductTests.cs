@@ -15,10 +15,10 @@ public class ProductTests
         new Product { ProductId = 3, ProductName = "C", Rating = 4 }
     ];
 
-    private readonly List<ProductSummary> expectedSummaries =
+    private readonly List<Summary> expectedSummaries =
     [
-        new ProductSummary { Rating = 5, Count = 2 },
-        new ProductSummary { Rating = 4, Count = 1 }
+        new Summary { Value = 5, Count = 2 },
+        new Summary { Value = 4, Count = 1 }
     ];
 
     private readonly Mock<IRepositoryProduct> _repositoryProductMock = new();

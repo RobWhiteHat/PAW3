@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW3.Core.BusinessLogic;
+using PAW3.Models.DTO;
 using PAW3.Models.Entities;
 
 namespace PAW3.Api.Controllers;
@@ -10,8 +11,7 @@ public class UserApiController(IUserBusiness userBusiness) : ControllerBase
 {
     // GET: api/UserApiController
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> Get()
-    
+    public async Task<ActionResult<UserDTO>> Get()
     {
         var users = await userBusiness.GetUsers(id: null);
         return Ok(users);
@@ -19,10 +19,10 @@ public class UserApiController(IUserBusiness userBusiness) : ControllerBase
 
     // GET api/UserApiController/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> Get(int id)
+    public async Task<ActionResult<UserDTO>> Get(int id)
     {
         var users = await userBusiness.GetUsers(id);
-        var user = users.FirstOrDefault();
+        var user = users.Users.FirstOrDefault();
         if (user == null)
             return NotFound();
         return Ok(user);

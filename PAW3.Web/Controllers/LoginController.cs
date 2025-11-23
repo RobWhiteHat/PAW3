@@ -53,10 +53,10 @@ public class LoginController : Controller
             // Get all users from API
             var endpoint = $"{_apiBaseUrl}/UserApi";
             var response = await _restProvider.GetAsync(endpoint, null);
-            var users = JsonProvider.DeserializeSimple<List<UserViewModel>>(response) ?? new List<UserViewModel>();
+            var users = JsonProvider.DeserializeSimple<UserDtoViewModel>(response);
 
             // Find user by username or email
-            var user = users.FirstOrDefault(u => 
+            var user = users.Users.FirstOrDefault(u => 
                 (u.Username != null && u.Username.Equals(model.Username, StringComparison.OrdinalIgnoreCase)) ||
                 (u.Email != null && u.Email.Equals(model.Username, StringComparison.OrdinalIgnoreCase)));
 
@@ -123,16 +123,16 @@ public class LoginController : Controller
             // Check if username already exists
             var endpoint = $"{_apiBaseUrl}/UserApi";
             var response = await _restProvider.GetAsync(endpoint, null);
-            var users = JsonProvider.DeserializeSimple<List<UserViewModel>>(response) ?? new List<UserViewModel>();
+            var users = JsonProvider.DeserializeSimple<UserDtoViewModel>(response);
 
-            if (users.Any(u => u.Username != null && u.Username.Equals(model.Username, StringComparison.OrdinalIgnoreCase)))
+            if (users.Users.Any(u => u.Username != null && u.Username.Equals(model.Username, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError("Username", "Username is already taken.");
                 return View(model);
             }
 
             // Check if email already exists
-            if (users.Any(u => u.Email != null && u.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase)))
+            if (users.Users.Any(u => u.Email != null && u.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError("Email", "Email is already registered.");
                 return View(model);

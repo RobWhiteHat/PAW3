@@ -1,5 +1,7 @@
-using PAW3.Models.Entities;
 using PAW3.Data.Repositories;
+using PAW3.Models.DTO;
+using PAW3.Models.Entities;
+using System.Threading.Tasks;
 
 namespace PAW3.Core.BusinessLogic;
 
@@ -17,7 +19,7 @@ public interface IUserBusiness
     /// </summary>
     /// <param name="id">Optional user id.</param>
     /// <returns>A collection of users.</returns>
-    Task<IEnumerable<User>> GetUsers(int? id);
+    Task<UserDTO> GetUsers(int? id);
 
     /// <summary>
     /// Saves a user (creates or updates).
@@ -44,11 +46,34 @@ public class UserBusiness(IRepositoryUser repositoryUser) : IUserBusiness
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<User>> GetUsers(int? id)
+    public async Task<UserDTO> GetUsers(int? id)
     {
-        return id == null
+        var hasId = id.HasValue;
+        var userDto = new UserDTO();
+
+        var users = !hasId
             ? await repositoryUser.ReadAsync()
             : [await repositoryUser.FindAsync((int)id)];
+
+        if (!hasId && users != null && users.Any())
+        {
+            userDto.Summaries.AddRange(users.Select(x => new
+            {
+                Id = x.UserId,
+                Name = x.Username,
+                Value = 0.00M,
+            })
+            .GroupBy(y => y.Name)
+            .SelectMany(g => g.Select(sub => new Summary
+            {
+                Id = sub.Id,
+                Name = sub.Name ?? "",
+                Value = 0.00M,
+                Count = g.Count()
+            })).OrderByDescending(x => x.Count));
+        }
+        userDto.Users = users;
+        return userDto;
     }
 }
 

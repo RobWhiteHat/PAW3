@@ -1,4 +1,6 @@
-@model IEnumerable<UserViewModel>
+@using PAW3.Core.Services
+@model UserDtoViewModel
+@inject IEntityOperationsService entityService
 
 @{
     ViewData["Title"] = "Users";
@@ -19,21 +21,21 @@
         </div>
     }
 
-    @if (Model != null && Model.Any())
+    @if (Model != null && Model.Users.Any())
     {
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.UserId)</th>
-                        <th>@Html.DisplayNameFor(model => model.Username)</th>
-                        <th>@Html.DisplayNameFor(model => model.Email)</th>
-                        <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+                        <th>@Html.DisplayNameFor(model => model.Users.FirstOrDefault().UserId)</th>
+                        <th>@Html.DisplayNameFor(model => model.Users.FirstOrDefault().Username)</th>
+                        <th>@Html.DisplayNameFor(model => model.Users.FirstOrDefault().Email)</th>
+                        <th>@Html.DisplayNameFor(model => model.Users.FirstOrDefault().IsActive)</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Users)
                     {
                         <tr>
                             <td><strong>@Html.DisplayFor(modelItem => item.UserId)</strong></td>
@@ -82,3 +84,9 @@
         </div>
     }
 </div>
+
+@{
+    ViewData["Value"] = "N/A";
+    ViewData["SummaryTitle"] = "User";
+    await Html.RenderPartialAsync("Partial/Summary", Model?.Summaries ?? []);
+}
